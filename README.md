@@ -71,7 +71,13 @@ Poi crea il container, sostituendo `STORAGE` e il nome del template con i tuoi:
 ```bash
 STORAGE=local-lvm
 
-pct create 120 local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst   --hostname rinascita   --cores 1 --memory 512 --swap 512   --rootfs ${STORAGE}:4   --net0 name=eth0,bridge=vmbr0,ip=dhcp   --unprivileged 1   --onboot 1
+pct create 120 local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst \
+  --hostname rinascita \
+  --cores 1 --memory 512 --swap 512 \
+  --rootfs ${STORAGE}:4 \
+  --net0 name=eth0,bridge=vmbr0,ip=dhcp \
+  --unprivileged 1 \
+  --onboot 1
 
 pct start 120
 ```
