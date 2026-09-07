@@ -46,25 +46,38 @@ età del corpo, tipo di corpo.
 
 ### 1. Crea il container — sul nodo Proxmox
 
-```bash
-# template Debian 12, se non ce l'hai gia'
-pveam update
-pveam download local debian-12-standard_12.12-1_amd64.tar.zst
+Prima guarda cosa hai a disposizione: il nome dello storage cambia da
+installazione a installazione (`local-lvm` con LVM-thin, `local-zfs` su ZFS,
+`local` se usi una directory).
 
-# container non privilegiato, 512 MB di RAM bastano e avanzano
-pct create 120 local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst \
-  --hostname rinascita \
-  --cores 1 --memory 512 --swap 512 \
-  --rootfs local-lvm:4 \
-  --net0 name=eth0,bridge=vmbr0,ip=dhcp \
-  --unprivileged 1 \
-  --onboot 1
+```bash
+# storage che possono ospitare il disco di un container
+pvesm status --content rootdir
+
+# template gia' scaricati
+pveam list local | grep debian
+```
+
+Se il template Debian 12 non c'e':
+
+```bash
+pveam update
+pveam available --section system | grep debian-12
+pveam download local debian-12-standard_12.12-1_amd64.tar.zst
+```
+
+Poi crea il container, sostituendo `STORAGE` e il nome del template con i tuoi:
+
+```bash
+STORAGE=local-lvm
+
+pct create 120 local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst   --hostname rinascita   --cores 1 --memory 512 --swap 512   --rootfs ${STORAGE}:4   --net0 name=eth0,bridge=vmbr0,ip=dhcp   --unprivileged 1   --onboot 1
 
 pct start 120
 ```
 
-Sostituisci `120` con un ID libero e il nome del template con quello che
-`pveam available --section system | grep debian` ti mostra.
+Sostituisci `120` con un ID libero. Se preferisci lasciar scegliere il primo
+storage adatto: `STORAGE=$(pvesm status --content rootdir | awk 'NR==2{print $1}')`.
 
 ### 2. Installa l'app — dentro il container
 
