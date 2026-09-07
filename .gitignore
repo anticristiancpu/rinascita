@@ -1,0 +1,17 @@
+# Dati personali: restano sul server, mai nella repository
+dati.json
+dati.json.tmp
+backup/
+*.xlsx
+*.xls
+
+# File temporanei
+_*.html
+_*.xls
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# Impostazioni locali di Claude Code
+.claude/

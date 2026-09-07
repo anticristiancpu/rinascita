@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f14">
+<title>Rinascita — Trasformazione fisica</title>
+<style>
+  :root{
+    --bg:#0b0f14; --card:#141c28; --card2:#1a2432;
+    --line:#243044; --txt:#e8eef7; --dim:#8fa1bb; --dim2:#5f7391;
+    --acc:#3ddc97; --acc2:#2fb37c; --warn:#f5b942; --bad:#ef6461; --blue:#5aa9e6;
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 600px at 50% -10%,#16212f 0%,var(--bg) 60%) fixed;
+    color:var(--txt);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; padding-bottom:90px;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+
+  /* ---------- header ---------- */
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line);
+        background:linear-gradient(180deg,#121a26 0%,#0e151f 100%)}
+  .hero-bg{position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(560px 200px at 12% 0%,rgba(61,220,151,.16),transparent 70%),
+      radial-gradient(520px 220px at 88% 110%,rgba(90,169,230,.13),transparent 70%);}
+  .hero-bg::after{content:"";position:absolute;inset:0;opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+    background-size:34px 34px;
+    -webkit-mask-image:radial-gradient(600px 200px at 50% 0%,#000,transparent 75%);
+            mask-image:radial-gradient(600px 200px at 50% 0%,#000,transparent 75%)}
+  .hero-in{position:relative;padding-top:20px;padding-bottom:18px}
+  .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .brand{display:flex;gap:13px;align-items:center;min-width:0}
+  .mark{width:42px;height:42px;flex:none;border-radius:13px;display:grid;place-items:center;
+    background:linear-gradient(145deg,var(--acc) 0%,#2aa9b0 100%);color:#052a1e;
+    font-weight:800;font-size:21px;letter-spacing:-.03em;
+    box-shadow:0 6px 18px -6px rgba(61,220,151,.55), inset 0 1px 0 rgba(255,255,255,.35)}
+  h1{font-size:25px;margin:0;letter-spacing:-.035em;font-weight:800;line-height:1.1;
+     background:linear-gradient(92deg,#fff 0%,#bfe9d6 55%,#8fd3f5 100%);
+     -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--dim);font-size:12.5px;margin-top:3px}
+  .hero-chips{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+
+  .hero-prog{display:flex;align-items:center;gap:22px;margin-top:20px;flex-wrap:wrap}
+  .hp-num{display:flex;align-items:baseline;gap:5px;flex:none}
+  .hp-big{font-size:38px;font-weight:800;letter-spacing:-.045em;font-variant-numeric:tabular-nums;line-height:1}
+  .hp-unit{font-size:14px;font-weight:700;color:var(--dim)}
+  .hp-delta{font-size:13px;font-weight:700;margin-left:6px}
+  .hp-bar{flex:1;min-width:240px}
+  .hp-lab,.hp-lab2{display:flex;justify-content:space-between;font-size:11.5px;color:var(--dim2);
+    font-variant-numeric:tabular-nums}
+  .hp-lab{margin-bottom:6px}
+  .hp-lab2{margin-top:6px}
+  .hp-lab2 span:first-child{color:var(--acc);font-weight:700}
+  .bar.big{height:10px}
+  .bar.big i{background:linear-gradient(90deg,#2aa9b0,var(--acc));box-shadow:0 0 14px -2px rgba(61,220,151,.6)}
+  @media(max-width:560px){ .hp-big{font-size:31px} h1{font-size:22px} }
+
+  nav{position:sticky;top:0;z-index:20;background:rgba(11,15,20,.85);backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  nav .wrap::-webkit-scrollbar{display:none}
+  nav button{background:none;border:0;color:var(--dim);padding:13px 12px;font:inherit;font-weight:600;
+      font-size:14px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+  nav button.on{color:var(--txt);border-bottom-color:var(--acc)}
+
+  section{display:none;padding-top:18px}
+  section.on{display:block}
+
+  .grid{display:grid;gap:12px}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:820px){.g4{grid-template-columns:repeat(2,1fr)}.g3,.g2{grid-template-columns:1fr}}
+
+  .card{background:linear-gradient(180deg,var(--card) 0%,var(--card2) 100%);
+        border:1px solid var(--line);border-radius:var(--r);padding:16px}
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin:0 0 12px}
+  .card h2 .r{float:right;margin-left:10px;text-transform:none;letter-spacing:0;color:var(--dim2);font-weight:400}
+
+  .kpi .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--dim2)}
+  .kpi .val{font-size:30px;font-weight:700;letter-spacing:-.03em;margin-top:4px;font-variant-numeric:tabular-nums}
+  .kpi .val small{font-size:14px;font-weight:600;color:var(--dim);margin-left:2px}
+  .kpi .note{font-size:12px;color:var(--dim);margin-top:4px}
+  .up{color:var(--bad)} .down{color:var(--acc)} .flat{color:var(--dim)}
+
+  .bar{height:8px;background:#0d141d;border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));border-radius:99px;transition:width .5s}
+  .bar.b2 i{background:linear-gradient(90deg,#3a7bd5,var(--blue))}
+  .bar.b3 i{background:linear-gradient(90deg,#8a6d1f,var(--warn))}
+
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim2);text-align:right;padding:8px;font-weight:600;
+     border-bottom:1px solid var(--line);white-space:nowrap}
+  th:first-child,td:first-child{text-align:left}
+  td{padding:9px 8px;text-align:right;border-bottom:1px solid #1b2432;font-size:14px;white-space:nowrap}
+  tr.det td{border-bottom:1px solid var(--line);background:#0e151f;padding:0}
+  .tscroll{overflow-x:auto;margin:0 -4px}
+
+  /* variazione: pastiglia colorata, leggibile a colpo d'occhio */
+  .d{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12.5px;font-weight:700;
+     line-height:1.55;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .d.pos{color:#5cf3b0;background:rgba(61,220,151,.15)}
+  .d.neg{color:#ff8e8b;background:rgba(239,100,97,.15)}
+  .d.nil{color:var(--dim2);background:rgba(143,161,187,.10)}
+
+  /* storico: cella a due righe, valore + variazione, tutto centrato */
+  .storico table{font-size:14px}
+  .storico th,.storico td{text-align:center}
+  .storico th{padding:9px 10px 7px;position:sticky;top:0;background:#151d29;z-index:1;vertical-align:bottom}
+  .storico th .u{display:block;margin-top:3px;font-size:10px;font-weight:600;letter-spacing:0;
+    text-transform:none;color:var(--dim2);opacity:.85}
+  .storico td{padding:9px 10px;vertical-align:top}
+  .storico tbody tr:not(.det):hover{background:#161f2c}
+  .storico .nv{display:block;font-size:16px;line-height:1.3}
+  .storico .dv{display:block;line-height:1.3;margin-top:3px}
+  .storico .cdata{font-size:13.5px;white-space:nowrap;padding-top:13px}
+  .storico .fonte{color:var(--dim2);font-size:10px;margin-left:5px}
+  .storico .dgrid div{text-align:center}
+  .storico .empty,.storico .hint{text-align:center}
+  .storico label{text-align:center}
+  .storico input{text-align:center}
+  .storico .row{justify-content:center}
+  .storico h2{text-align:left}
+
+  input,select,textarea{background:#0d141d;border:1px solid var(--line);color:var(--txt);border-radius:10px;
+      padding:10px 11px;font:inherit;font-size:14px;width:100%}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--acc2);outline-offset:-1px}
+  label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim2);margin-bottom:5px;font-weight:600}
+  .field{margin-bottom:10px}
+  .letto{background:#0b111a;border:1px dashed var(--line);border-radius:10px;padding:10px 11px;
+    font-size:14px;font-variant-numeric:tabular-nums}
+  .btn{background:var(--acc);color:#06231a;border:0;border-radius:10px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer}
+  .btn:hover{background:#4ff0a9}
+  .btn.ghost{background:transparent;color:var(--dim);border:1px solid var(--line)}
+  .btn.ghost:hover{color:var(--txt);border-color:var(--dim2);background:#0d141d}
+  .btn.sm{padding:7px 11px;font-size:13px}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+  .phase{border:1px solid var(--line);border-radius:var(--r);padding:14px;background:var(--card);margin-bottom:10px}
+  .phase.now{border-color:var(--acc2);box-shadow:0 0 0 1px rgba(61,220,151,.25)}
+  .phase.done{opacity:.62}
+  .phase .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+  .phase .nm{font-weight:700;font-size:16px}
+  .phase .dt{font-size:12px;color:var(--dim)}
+  .phase p{margin:9px 0 11px;color:#c3d1e4;font-size:14px}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:99px;
+       background:#0d141d;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+  .tag.ok{color:var(--acc);border-color:var(--acc2)}
+  .tag.now{color:#06231a;background:var(--acc);border-color:var(--acc)}
+  .tag.warn{color:var(--warn);border-color:#4a3a1c}
+
+  .chip{font-size:11px;font-weight:700;letter-spacing:.04em;padding:5px 11px;border-radius:99px;
+    background:#0d141d;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+  .chip.ok{color:var(--acc);border-color:#1e4636}
+  .chip.warn{color:var(--warn);border-color:#4a3a1c}
+  .sel{display:flex;gap:6px;flex-wrap:wrap}
+  .sel button{font:inherit;font-size:12px;font-weight:600;padding:5px 10px;border-radius:99px;cursor:pointer;
+    background:#0d141d;border:1px solid var(--line);color:var(--dim)}
+  .sel button.on{color:var(--txt);border-color:var(--dim2);background:#182231}
+  .sel button i{display:inline-block;width:8px;height:8px;border-radius:99px;margin-right:6px;vertical-align:middle;opacity:.35}
+  .sel button.on i{opacity:1}
+
+  .chart{width:100%;height:280px;display:block}
+  .chart text{fill:var(--dim2);font-size:10px;font-family:inherit}
+  .empty{color:var(--dim2);text-align:center;padding:28px 10px;font-size:14px}
+  .sep{height:1px;background:var(--line);margin:14px 0}
+  .hint{font-size:12px;color:var(--dim2);margin-top:6px}
+  .del,.exp{color:var(--dim2);cursor:pointer;background:none;border:0;font-size:15px;padding:0 4px;line-height:1}
+  .del:hover{color:var(--bad)} .exp:hover{color:var(--txt)}
+  .legend{display:flex;gap:14px;font-size:12px;color:var(--dim);margin-top:8px;flex-wrap:wrap}
+  .legend i{display:inline-block;width:14px;height:2px;vertical-align:middle;margin-right:5px}
+  .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--line);
+    border-top:1px solid var(--line)}
+  .dgrid div{background:#0e151f;padding:9px 12px}
+  .dgrid .k{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim2)}
+  .dgrid .v{font-size:14px;font-variant-numeric:tabular-nums;margin-top:2px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--acc);color:#06231a;
+    padding:11px 18px;border-radius:99px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:99;
+    max-width:90vw;text-align:center}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+  .toast.err{background:var(--bad);color:#2a0d0d}
+  .box{border:1px solid var(--line);border-radius:12px;padding:14px;background:#0e151f;margin-top:12px}
+  .lst{max-height:330px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;background:#0b111a}
+  .lst::-webkit-scrollbar{width:9px}
+  .lst::-webkit-scrollbar-thumb{background:#2b3a51;border-radius:9px;border:2px solid #0b111a}
+  .lrow{display:flex;align-items:center;gap:10px;padding:8px 11px;border-bottom:1px solid #172130;cursor:pointer}
+  .lrow:last-child{border-bottom:0}
+  .lrow:hover{background:#111a26}
+  .lrow.on{background:rgba(61,220,151,.07)}
+  .lrow input[type=checkbox]{width:16px;height:16px;flex:none;margin:0;accent-color:var(--acc);cursor:pointer}
+  .lrow .ld{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .lrow .lo{color:var(--dim2);margin-left:7px;font-size:12px}
+  .lrow .lw{margin-left:auto;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .lrow .lt{display:flex;gap:5px;flex:none;width:150px;justify-content:flex-end}
+  @media(max-width:560px){ .lrow .lt{width:auto} .lrow .lt .tag:first-child{display:none} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="wrap hero-in">
+    <div class="hero-top">
+      <div class="brand">
+        <div class="mark">R</div>
+        <div>
+          <h1>Rinascita</h1>
+          <div class="sub" id="hdrSub"></div>
+        </div>
+      </div>
+      <div class="hero-chips">
+        <span class="chip" id="hdrFase"></span>
+        <span class="chip" id="stato">◌</span>
+      </div>
+    </div>
+
+    <div class="hero-prog">
+      <div class="hp-num">
+        <span class="hp-big" id="hpPeso">—</span>
+        <span class="hp-unit">kg</span>
+        <span class="hp-delta" id="hpDelta"></span>
+      </div>
+      <div class="hp-bar">
+        <div class="hp-lab"><span id="hpA"></span><span id="hpC"></span></div>
+        <div class="bar big"><i id="pgBar" style="width:0"></i></div>
+        <div class="hp-lab2"><span id="hpPct"></span><span id="hpNext"></span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav><div class="wrap">
+  <button data-t="dash" class="on">Dashboard</button>
+  <button data-t="reg">Registro</button>
+  <button data-t="fasi">Fasi</button>
+  <button data-t="mile">Milestone</button>
+  <button data-t="set">Impostazioni</button>
+</div></nav>
+
+<div class="wrap">
+
+  <!-- ============ DASHBOARD ============ -->
+  <section id="dash" class="on">
+    <div class="grid g4" style="margin-bottom:12px">
+      <div class="card kpi"><div class="lbl">Peso attuale</div><div class="val" id="kPeso">—</div><div class="note" id="kPesoN"></div></div>
+      <div class="card kpi"><div class="lbl">Persi finora</div><div class="val down" id="kPersi">—</div><div class="note" id="kPersiN"></div></div>
+      <div class="card kpi"><div class="lbl">BMI</div><div class="val" id="kBmi">—</div><div class="note" id="kBmiN"></div></div>
+      <div class="card kpi"><div class="lbl">All'obiettivo</div><div class="val" id="kMan">—</div><div class="note" id="kManN"></div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <h2 id="curPhaseTitle">Fase corrente</h2>
+      <div id="curPhase"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <h2>Andamento peso <span class="r"><span class="sel" id="rangeSel"></span></span></h2>
+      <svg class="chart" id="chartW"></svg>
+      <div class="legend">
+        <span><i style="background:#3ddc97"></i>Peso reale</span>
+        <span><i style="background:#5aa9e6;opacity:.8"></i>Traiettoria obiettivo</span>
+        <span><i style="background:#f5b942"></i>Media 7 letture</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <h2>Composizione corporea <span class="r"><span class="sel" id="rangeSelC"></span></span></h2>
+      <div class="sel" id="metSel" style="margin-bottom:12px"></div>
+      <svg class="chart" id="chartC"></svg>
+      <div class="legend" id="legC"></div>
+    </div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h2>Ultima rilevazione completa</h2>
+        <div id="ultima"></div>
+      </div>
+      <div class="card">
+        <h2>Statistiche</h2>
+        <div class="grid g2" id="stats"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REGISTRO ============ -->
+  <section id="reg">
+    <div class="card storico">
+      <div class="row" style="justify-content:space-between;margin-bottom:12px">
+        <h2 style="margin:0">Storico <span class="r" id="nMis"></span></h2>
+        <button class="btn sm" id="btnApriForm">＋ Nuova rilevazione</button>
+      </div>
+
+      <div id="formWrap" style="display:none">
+        <div class="box" style="margin:0 0 14px">
+          <div class="grid g4">
+            <div class="field"><label>Data</label><input type="date" id="fData"></div>
+            <div class="field"><label>Peso (kg)</label><input type="number" step="0.1" id="f_peso" placeholder="104.2"></div>
+          </div>
+          <div class="grid g4" id="fBase"></div>
+          <div class="grid g4" id="fAltri" style="display:none"></div>
+          <div class="field"><label>Note</label><input type="text" id="f_note" placeholder="opzionale"></div>
+          <div class="row">
+            <button class="btn" id="btnSave">Salva rilevazione</button>
+            <button class="btn ghost sm" id="btnAltri">Altri parametri ▾</button>
+            <button class="btn ghost sm" id="btnChiudiForm">Annulla</button>
+          </div>
+          <div class="hint">Il BMI è calcolato dall'altezza. Salvando due volte la stessa data, il dato viene sovrascritto.</div>
+        </div>
+      </div>
+
+      <div class="tscroll"><table id="tbl">
+        <thead><tr id="tblHead"></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <div class="empty" id="tblEmpty">Nessuna rilevazione registrata. Usa <b>＋ Nuova rilevazione</b>
+        oppure importa lo storico della bilancia dalle Impostazioni.</div>
+      <div class="hint" id="tblNota"></div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h2>Riepilogo settimanale <span class="r">media delle pesate di ogni settimana</span></h2>
+      <div id="last7"></div>
+    </div>
+  </section>
+
+  <!-- ============ FASI ============ -->
+  <section id="fasi"><div id="phaseList"></div></section>
+
+  <!-- ============ MILESTONE ============ -->
+  <section id="mile">
+    <div class="card" style="margin-bottom:12px">
+      <h2>Traguardi <span class="r"><span id="msDone">0</span> di <span id="msTot">0</span></span></h2>
+      <div class="bar"><i id="msBar" style="width:0"></i></div>
+      <div class="hint" id="msHint"></div>
+    </div>
+    <div id="msList"></div>
+  </section>
+
+  <!-- ============ IMPOSTAZIONI ============ -->
+  <section id="set">
+    <div class="grid g2" style="align-items:start">
+      <div class="card">
+        <h2>Parametri</h2>
+        <div class="grid g2">
+          <div class="field"><label>Altezza (m)</label><input type="number" step="0.001" id="sAlt"></div>
+          <div class="field"><label>Data di inizio</label><input type="date" id="sInizio"></div>
+          <div class="field"><label>Peso obiettivo (kg)</label><input type="number" step="0.1" id="sPo"></div>
+          <div class="field"><label>Peso di partenza</label>
+            <div id="sPiVal" class="letto"></div></div>
+        </div>
+        <div class="hint" id="sPiNota" style="margin:-4px 0 12px"></div>
+        <button class="btn" id="btnSet" style="width:100%">Salva parametri</button>
+      </div>
+
+      <div class="card">
+        <h2>Importa dalla bilancia</h2>
+        <p style="color:var(--dim);font-size:13px;margin:0">
+          Nell'app INSMART Health esporta lo storico in <b style="color:var(--txt)">.xls</b> e caricalo qui.
+          Vengono lette tutte le metriche disponibili. Se in un giorno ci sono più pesate,
+          viene tenuta la rilevazione più completa.
+        </p>
+        <div class="row" style="margin-top:12px">
+          <button class="btn" id="btnXls">Scegli file .xls</button>
+          <input type="file" id="fileXls" accept=".xls" style="display:none">
+        </div>
+        <div id="impBox"></div>
+      </div>
+
+      <div class="card">
+        <h2>Dati</h2>
+        <div id="dovSalva" style="color:var(--dim);font-size:13px"></div>
+        <div class="sep"></div>
+        <div class="row">
+          <button class="btn ghost sm" id="btnExpJ">Esporta JSON</button>
+          <button class="btn ghost sm" id="btnExpC">Esporta CSV</button>
+          <button class="btn ghost sm" id="btnImp">Importa JSON</button>
+          <input type="file" id="fileImp" accept=".json" style="display:none">
+        </div>
+        <div class="sep"></div>
+        <button class="btn ghost sm" id="btnReset" style="color:var(--bad);border-color:#40282a">Cancella tutti i dati</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="xls.js"></script>
+<script>
+"use strict";
+
+/* ================= dati dal file Rinascita.xlsx ================= */
+const SEED = {
+  altezza: 1.70,           // coerente con il BMI riportato dalla bilancia
+  pesoObiettivo: 72.1,
+  inizio: "2026-07-19",
+  fasi: [
+    {n:"Fase 1", da:"2026-08-03", a:"2026-08-10", ob:103.1,
+     d:'Prima fase "leggera": cominciare a mangiare decentemente e a fare un minimo di cardio (raggiungere 8.000/10.000 passi al giorno).'},
+    {n:"Fase 2", da:"2026-08-11", a:"2026-08-22", ob:93.1,
+     d:'Ricominciare ad allenarsi sia in palestra che con il cardio. 1 h al giorno alternando cardio e pesi. Ricominciare con la creatina.'},
+    {n:"Fase 3", da:"2026-08-23", a:"2026-09-25", ob:85.1,
+     d:'Ritornare alla routine con ciclo di quattro allenamenti (Pull + Cardio, Push + Cardio, Gambe + Cardio, Cardio Lungo e Riposo).'},
+    {n:"Fase 4", da:"2026-09-26", a:"2026-10-31", ob:82.1,
+     d:'Ridurre il cardio a magari 2 volte per ciclo. Aumentare tempo pesi.'},
+    {n:"Fase 5", da:"2026-11-01", a:"2027-01-19", ob:72.1,
+     d:'Solo cardio lungo una volta a settimana. Tutto quello che rimane pesi.'}
+  ],
+  bmiSoglie: [
+    {v:35, n:"Obesità 1ª Classe", d:"BMI sotto 35: si esce dall'obesità di 2ª classe."},
+    {v:30, n:"Sovrappeso",        d:"BMI sotto 30: fuori dall'obesità, solo sovrappeso."},
+    {v:25, n:"Normopeso",         d:"BMI sotto 25: normopeso a tutti gli effetti."}
+  ]
+};
+
+/* I traguardi non sono una lista fissa: nascono dal peso di partenza,
+   dall'obiettivo e dall'altezza, così restano coerenti se cambia il punto di avvio. */
+function milestoneDefs(){
+  const pi = PI(), ob = S.pesoObiettivo, out = [];
+
+  SEED.bmiSoglie.forEach(s=>{
+    const w = s.v*S.altezza*S.altezza;
+    if(w < pi-0.2) out.push({n:s.n, w:Math.round(w*10)/10, d:s.d, tipo:"bmi"});
+  });
+
+  for(let d=Math.floor(pi/10)*10; d>=Math.floor(ob/10)*10; d-=10){
+    const w = d-0.1;
+    if(w >= pi-0.2 || w < ob) continue;
+    out.push({n:`Sotto ${d===80?"gli":"i"} ${d}`, tipo:"soglia", w:Math.round(w*10)/10,
+      d: d===100 ? "La bilancia torna a due cifre."
+                 : `La prima cifra diventa ${String(d).slice(0,-1)-1}.`});
+  }
+
+  const totale = pi-ob;
+  const frasi = {5:"I primi cinque chili. Quelli che dicono se il metodo funziona.",
+                 10:"Doppia cifra di chili persi."};
+  for(let k=5; k<=Math.ceil(totale/5)*5; k+=5){
+    const w = Math.round((pi-k)*10)/10;
+    let d = frasi[k];
+    if(!d){
+      const q = k/totale;
+      d = q>=.97 ? "Praticamente l'obiettivo."
+        : q>=.72 ? "Tre quarti del percorso."
+        : q>=.45 && q<=.55 ? "Metà strada."
+        : `${k} chili in meno addosso.`;
+    }
+    if(k > totale) d = "Oltre l'obiettivo.";
+    out.push({n:`-${k} kg`, w, d, tipo:"rel"});
+  }
+
+  out.push({n:"Ritorno", w:ob, tipo:"obiettivo", d:"L'obiettivo del piano: il peso da cui vuoi ripartire."});
+
+  const visti = new Set();
+  return out.filter(m => m.w>0 && !visti.has(m.n) && visti.add(m.n))
+            .sort((a,b)=> b.w-a.w || (a.tipo==="obiettivo"?-1:1));
+}
+
+/* ============ metriche (ordine = ordine nei form e nei grafici) ============ */
+const MET = [
+  {k:"peso",        n:"Peso",                u:"kg",   c:"#3ddc97", base:1, giu:0},
+  {k:"bf",          n:"Grasso corporeo",     u:"%",    c:"#ef6461", base:1, giu:0},
+  {k:"grassoKg",    n:"Massa grassa",        u:"kg",   c:"#f08a86", calc:1, giu:0},
+  {k:"muscolo",     n:"Massa muscolare",     u:"kg",   c:"#5aa9e6", base:1, giu:1},
+  {k:"acqua",       n:"Acqua corporea",      u:"%",    c:"#4dd0e1", base:1, giu:1},
+  {k:"gv",          n:"Grasso viscerale",    u:"livello", c:"#f5b942", base:1, giu:0},
+  {k:"gs",          n:"Grasso sottocutaneo", u:"%",    c:"#e8a33d", base:1, giu:0},
+  {k:"scheletrico", n:"Muscolo scheletrico", u:"%",    c:"#7cc3f0", giu:1},
+  {k:"proteine",    n:"Proteine",            u:"%",    c:"#b388f5", giu:1},
+  {k:"lbm",         n:"Massa magra",         u:"kg",   c:"#6ee7b7", giu:1},
+  {k:"ossa",        n:"Massa ossea",         u:"kg",   c:"#9aa8bd", giu:1},
+  {k:"bmr",         n:"Metabolismo basale",  u:"kcal", c:"#ffd166", giu:1},
+  {k:"rapporto",    n:"Rapporto muscolare",  u:"%",    c:"#86efac", giu:1},
+  {k:"eta",         n:"Età del corpo",       u:"anni", c:"#c4b5fd", giu:0}
+];
+const metaOf = k => MET.find(m=>m.k===k);
+
+/* ================= stato e persistenza ================= */
+const KEY = "rinascita.v1";
+let S = loadLocal();
+let MODE = "local", saveTimer = null, saving = false, dirty = false, filePath = "";
+let RANGE = "prog", RANGEC = "all", METS = ["bf","muscolo"], IMP = null, apriForm = ()=>{};
+
+function base(){
+  return {altezza:SEED.altezza, pesoObiettivo:SEED.pesoObiettivo, inizio:SEED.inizio, mis:[]};
+}
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){ const o = JSON.parse(raw); o.mis = o.mis||[]; return Object.assign(base(), o); }
+  }catch(e){}
+  return base();
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+  if(MODE!=="file") return;
+  dirty = true; stato();
+  clearTimeout(saveTimer); saveTimer = setTimeout(push, 400);
+}
+async function push(){
+  if(MODE!=="file" || saving) return;
+  saving = true; stato();
+  try{
+    const r = await fetch("/api/dati",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(S)});
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.errore||"errore");
+    dirty = false;
+  }catch(e){ dirty = true; toast("Salvataggio su file non riuscito",1); }
+  finally{ saving = false; stato(); }
+}
+function stato(){
+  const el = $("#stato"); if(!el) return;
+  if(MODE!=="file"){ el.className="chip warn"; el.textContent="● Salvataggio nel browser";
+                     el.title="Apri l'app con Avvia.bat per salvare in dati.json"; }
+  else if(saving){ el.className="chip"; el.textContent="◌ Salvataggio…"; }
+  else if(dirty){ el.className="chip warn"; el.textContent="● Modifiche non salvate"; }
+  else { el.className="chip ok"; el.textContent="● Salvato in dati.json"; el.title=filePath; }
+}
+async function boot(){
+  try{
+    const pj = await (await fetch("/api/ping",{cache:"no-store"})).json();
+    if(pj.ok){
+      MODE="file"; filePath = pj.file||"dati.json";
+      const j = await (await fetch("/api/dati",{cache:"no-store"})).json();
+      if(j.ok && j.esiste && j.dati && Array.isArray(j.dati.mis)) S = Object.assign(base(), j.dati);
+      else await push();
+    }
+  }catch(e){ MODE="local"; }
+  initForm(); initSel(); render(); stato();
+}
+window.addEventListener("beforeunload", e=>{ if(MODE==="file"&&(dirty||saving)){ e.preventDefault(); e.returnValue=""; }});
+
+/* ================= utilità ================= */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const num = (v,d) => (v==null||v===""||isNaN(v)) ? "—" : Number(v).toFixed(d==null?1:d);
+const iso = d => new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const parse = s => new Date(s+"T00:00:00");
+const fmt  = s => parse(s).toLocaleDateString("it-IT",{day:"2-digit",month:"short"});
+const fmtL = s => parse(s).toLocaleDateString("it-IT",{day:"2-digit",month:"2-digit",year:"numeric"});
+const days = (a,b) => Math.round((parse(b)-parse(a))/864e5);
+const today = () => iso(new Date());
+const bmi = w => w/(S.altezza*S.altezza);
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+
+const dec = k => (k==="bmr"||k==="eta") ? 0 : 1;
+function valOf(m,k){
+  if(!m) return null;
+  if(k==="grassoKg") return (m.peso!=null&&m.bf!=null) ? m.peso*m.bf/100 : null;
+  if(k==="bmi") return m.peso!=null ? bmi(m.peso) : null;
+  const v = m[k];
+  return (v==null||v===""||isNaN(v)) ? null : Number(v);
+}
+function sorted(){ return [...S.mis].sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:0); }
+function inProg(){ return sorted().filter(m=>m.data>=S.inizio); }
+
+/* Il peso di partenza è la prima rilevazione registrata dalla data di inizio in poi.
+   Finché non ce n'è nessuna il programma non è ancora avviato: niente peso, niente traguardi. */
+function avviato(){ return inProg().length > 0; }
+function PI(){ const s=inProg(); return s.length ? s[0].peso : 0; }
+function PIfonte(){ const s=inProg(); return s.length ? s[0] : null; }
+function last(){ const s=sorted(); return s.length?s[s.length-1]:null; }
+function pesoAttuale(){ const l=last(); return l?l.peso:0; }
+function toast(m,err){ const t=$("#toast"); t.textContent=m; t.className="toast on"+(err?" err":"");
+  clearTimeout(toast._t); toast._t=setTimeout(()=>t.className="toast",2400); }
+/* "−2.4" / "+0.8" / "0.0" — niente segno quando è praticamente zero */
+const segnato = (v,d) => (Math.abs(v)<0.05 ? "" : v>0 ? "−" : "+") + num(Math.abs(v),d);
+
+/* La variazione è una pastiglia: freccia = direzione reale, colore = se è un bene o no.
+   giu=1 per le metriche in cui scendere è un peggioramento (muscoli, acqua, proteine...). */
+function delta(v,giu,dec){
+  if(v==null||isNaN(v)) return '<span class="d nil">·</span>';
+  if(Math.abs(v)<0.05)  return '<span class="d nil">0.0</span>';
+  const bene = giu ? v>0 : v<0;
+  return `<span class="d ${bene?"pos":"neg"}">${v>0?"▲":"▼"} ${num(Math.abs(v),dec)}</span>`;
+}
+
+/* ================= fasi ================= */
+function phaseState(f){ const t=today(); return t<f.da?"next":t>f.a?"done":"now"; }
+function currentPhase(){
+  return SEED.fasi.find(f=>phaseState(f)==="now") || SEED.fasi.find(f=>phaseState(f)==="next") || null;
+}
+function targetAt(d){
+  let pw=PI(), pd=SEED.fasi[0].da;
+  if(d<=pd) return PI();
+  for(const f of SEED.fasi){
+    if(d<=f.a){
+      const tot=Math.max(1,days(pd,f.a)), el=clamp(days(pd,d),0,tot);
+      return pw+(f.ob-pw)*(el/tot);
+    }
+    pw=f.ob; pd=f.a;
+  }
+  return SEED.fasi[SEED.fasi.length-1].ob;
+}
+
+/* ================= render ================= */
+function render(){
+  const s = inProg(), tutte = sorted(), l = last(), pa = pesoAttuale();
+  const pi = PI(), via = avviato();
+  const persi = via ? pi-pa : 0, totale = via ? pi-S.pesoObiettivo : 0;
+  const pct = via && totale>0 ? clamp(persi/totale*100,0,100) : 0;
+
+  $("#hdrSub").textContent = tutte.length
+    ? `${tutte.length} rilevazioni · ultima il ${fmtL(l.data)}`
+    : "Nessuna rilevazione: registra la prima pesata dal Registro";
+
+  $("#kPeso").innerHTML = num(pa)+'<small>kg</small>';
+  $("#kPesoN").innerHTML = s.length>1
+    ? `dalla precedente: ${delta(s[s.length-1].peso-s[s.length-2].peso)} kg`
+    : (l ? "rilevazione del "+fmtL(l.data) : "in attesa della prima pesata");
+
+  $("#kPersi").innerHTML = segnato(persi)+'<small>kg</small>';
+  $("#kPersi").className = "val "+(persi>0.05?"down":persi<-0.05?"up":"flat");
+  $("#kPersiN").textContent = via ? `su ${num(totale)} kg da perdere` : "il percorso non è ancora partito";
+
+  const b = via ? bmi(pa) : null;
+  $("#kBmi").textContent = via ? num(b) : "—";
+  $("#kBmiN").textContent = !via ? "serve una pesata"
+    : b>=40?"Obesità III":b>=35?"Obesità II":b>=30?"Obesità I":b>=25?"Sovrappeso":b>=18.5?"Normopeso":"Sottopeso";
+
+  $("#kMan").innerHTML = via ? num(Math.max(0,pa-S.pesoObiettivo))+'<small>kg</small>' : "—";
+  const fine = SEED.fasi[SEED.fasi.length-1].a, gg = days(today(),fine);
+  $("#kManN").textContent = gg>0 ? `${gg} giorni al ${fmtL(fine)}` : "termine raggiunto";
+
+  $("#hpPeso").textContent = num(pa);
+  $("#hpDelta").innerHTML = s.length>1 ? delta(s[s.length-1].peso-s[s.length-2].peso)+" kg" : "";
+  $("#hpA").textContent = via ? "Partenza "+num(pi)+" kg" : "Partenza da registrare";
+  $("#hpC").textContent = "Obiettivo " + S.pesoObiettivo + " kg";
+  $("#hpPct").textContent = via ? num(pct)+"% del percorso" : "In attesa della prima pesata";
+  $("#pgBar").style.width = pct+"%";
+
+  const ms = milestones(), nxt = ms.find(m=>!m.hit);
+  $("#hpNext").textContent = !via ? "I traguardi nascono dalla prima pesata"
+    : nxt ? `Prossimo: ${nxt.n} · −${num(pa-nxt.w)} kg` : "Tutti i traguardi raggiunti";
+
+  const cp = currentPhase(), box = $("#curPhase");
+  const stf = cp ? phaseState(cp) : null;
+  $("#hdrFase").textContent = cp ? `${cp.n} · ${stf==="now"?"in corso":"dal "+fmtL(cp.da)}` : "Programma concluso";
+  $("#hdrFase").className = "chip"+(stf==="now"?" ok":"");
+  if(cp){
+    const st=phaseState(cp), tot=days(cp.da,cp.a)+1, el=clamp(days(cp.da,today())+1,0,tot);
+    const dif = pa-cp.ob;
+    $("#curPhaseTitle").textContent = st==="now"?"Fase corrente":"Prossima fase";
+    box.innerHTML = `
+      <div class="row" style="justify-content:space-between;margin-bottom:6px">
+        <div><b style="font-size:16px">${cp.n}</b>
+          <span style="margin-left:8px;color:var(--dim);font-size:12px">${fmtL(cp.da)} → ${fmtL(cp.a)}</span></div>
+        <div style="font-size:13px;color:var(--dim)">obiettivo <b style="color:var(--txt)">${cp.ob} kg</b>${
+          !via ? "" : dif>0 ? ` · mancano <b style="color:var(--warn)">${num(dif)} kg</b>`
+                            : ` · <b style="color:var(--acc)">raggiunto</b>`}</div>
+      </div>
+      <div class="bar b2"><i style="width:${st==="now"?el/tot*100:0}%"></i></div>
+      <p style="color:#c3d1e4;font-size:14px;margin:10px 0 0">${cp.d}</p>
+      <div class="hint">${st==="now"?`Giorno ${el} di ${tot}`:`Inizia tra ${days(today(),cp.da)} giorni`}</div>`;
+  } else box.innerHTML = '<div class="empty">Programma completato.</div>';
+
+  renderStats(s); renderUltima(tutte);
+  chartWeight(); chartComp();
+  renderTable(tutte); renderLast(tutte);
+  renderPhases(); renderMiles();
+
+  const fonte = PIfonte();
+  $("#sPiVal").innerHTML = fonte
+    ? `<b style="color:var(--acc)">${num(fonte.peso)} kg</b>
+       <span style="color:var(--dim2);font-size:12px">· ${fmtL(fonte.data)}</span>`
+    : `<span style="color:var(--dim2)">non ancora definito</span>`;
+  $("#sPiNota").innerHTML = fonte
+    ? `Il peso di partenza è quello della prima rilevazione dal ${fmtL(S.inizio)} in poi: si imposta da solo
+       e da lì vengono calcolati traguardi e percentuali. Per cambiarlo, modifica o elimina quella rilevazione.`
+    : `Non c'è ancora nessuna rilevazione dal ${fmtL(S.inizio)}. Registra la prima pesata:
+       quel peso diventerà il punto di partenza e da lì nasceranno i traguardi.`;
+
+  $("#sAlt").value=S.altezza;
+  $("#sPo").value=S.pesoObiettivo; $("#sInizio").value=S.inizio;
+  $("#dovSalva").innerHTML = MODE==="file"
+    ? `Ogni modifica viene scritta subito in <b style="color:var(--txt)">dati.json</b> nella cartella dell'app
+       (<span style="color:var(--dim2);font-size:12px">${filePath}</span>), con copia giornaliera in
+       <b style="color:var(--txt)">backup/</b>. Una copia resta anche nel browser come rete di sicurezza.`
+    : `Stai usando l'app senza il server: i dati restano <b style="color:var(--warn)">solo nel browser</b>.
+       Chiudi e apri <b style="color:var(--txt)">Avvia.bat</b>; quanto inserito finora verrà travasato in dati.json.`;
+}
+
+function renderStats(s){
+  const el = $("#stats");
+  if(s.length<2){ el.innerHTML='<div class="empty" style="grid-column:1/-1">Servono almeno 2 rilevazioni dall\'inizio del programma.</div>'; return; }
+  const f=s[0], u=s[s.length-1], gg=Math.max(1,days(f.data,u.data));
+  const perDay=(f.peso-u.peso)/gg, rest=u.peso-S.pesoObiettivo;
+  const eta = perDay>0.001 ? Math.ceil(rest/perDay) : null;
+  const etaD = eta ? new Date(Date.now()+eta*864e5).toLocaleDateString("it-IT",{day:"2-digit",month:"short",year:"numeric"}) : "—";
+  const gap = u.peso-targetAt(u.data);
+  const cc = [
+    ["Media settimanale",segnato(perDay*7)+" kg",`su ${gg} giorni`,""],
+    ["Media giornaliera",(Math.abs(perDay)<0.0005?"":perDay>0?"−":"+")+Math.abs(perDay*1000).toFixed(0)+" g","al giorno",""],
+    ["Stima obiettivo",etaD,eta?`tra ~${eta} giorni`:"ritmo insufficiente",""],
+    ["Vs traiettoria",segnato(-gap)+" kg",gap<=0?"in anticipo":"in ritardo",gap<=0?"var(--acc)":"var(--warn)"]
+  ];
+  el.innerHTML = cc.map(([a,b,c,col])=>`<div class="kpi"><div class="lbl">${a}</div>
+    <div class="val" style="font-size:21px${col?";color:"+col:""}">${b}</div><div class="note">${c}</div></div>`).join("");
+}
+
+function renderUltima(tutte){
+  const m = [...tutte].reverse().find(x=>x.bf!=null);
+  const el = $("#ultima");
+  if(!m){ el.innerHTML='<div class="empty">Nessuna rilevazione con dati di composizione.<br>Importa lo storico della bilancia.</div>'; return; }
+  const prev = [...tutte].reverse().find(x=>x.bf!=null && x.data<m.data);
+  const righe = MET.filter(x=>valOf(m,x.k)!=null).map(x=>{
+    const v=valOf(m,x.k), p=valOf(prev,x.k);
+    return `<div class="row" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid #1b2432">
+      <span style="color:var(--dim);font-size:13px"><i style="display:inline-block;width:8px;height:8px;border-radius:99px;
+        background:${x.c};margin-right:8px"></i>${x.n}</span>
+      <span style="font-variant-numeric:tabular-nums;font-size:14px"><b>${num(v,dec(x.k))}</b>
+        <span style="color:var(--dim2)">${x.u}</span>
+        <span style="margin-left:8px">${p!=null?delta(v-p,x.giu,dec(x.k)):'<span class="d nil">·</span>'}</span></span></div>`;
+  }).join("");
+  el.innerHTML = `<div class="hint" style="margin:-4px 0 8px">${fmtL(m.data)}${m.tipo?` · ${m.tipo}`:""}${
+    prev?` · variazioni rispetto al ${fmtL(prev.data)}`:""}</div>${righe}`;
+}
+
+function renderLast(tutte){
+  const l = tutte.slice(-8).reverse();
+  if(!l.length){ $("#last7").innerHTML='<div class="empty">Nessun dato.</div>'; return; }
+
+  const lunedi = d => { const x=parse(d); x.setDate(x.getDate()-((x.getDay()+6)%7)); return iso(x); };
+  const grup = new Map();
+  tutte.forEach(m=>{ const k=lunedi(m.data); (grup.get(k) || grup.set(k,[]).get(k)).push(m.peso); });
+  const sett = [...grup.entries()].sort((a,b)=> a[0]<b[0]?-1:1)
+    .map(([k,v])=>({k, n:v.length, media:v.reduce((a,b)=>a+b,0)/v.length,
+                    min:Math.min(...v), max:Math.max(...v)}));
+
+  $("#last7").innerHTML = sett.slice(-8).reverse().map(w=>{
+    const i = sett.findIndex(x=>x.k===w.k), p = i>0 ? sett[i-1] : null;
+    const fine = iso(new Date(parse(w.k).getTime()+6*864e5));
+    return `<div class="row" style="justify-content:space-between;padding:9px 0;border-bottom:1px solid #1b2432">
+      <span style="font-size:14px">${fmt(w.k)} – ${fmt(fine)}
+        <span style="color:var(--dim2);font-size:12px;margin-left:8px">${w.n} pesat${w.n===1?"a":"e"}${
+          w.n>1?` · da ${num(w.min)} a ${num(w.max)} kg`:""}</span></span>
+      <span style="font-variant-numeric:tabular-nums"><b>${num(w.media)} kg</b>
+        <span style="margin-left:10px">${p?delta(w.media-p.media)+" kg":""}</span></span></div>`;
+  }).join("");
+}
+
+/* colonne mostrate in tabella; tutte le altre metriche stanno nel dettaglio.
+   Nome breve per l'intestazione, unità presa dalla metrica (BMI a parte). */
+const COLTAB = [
+  {k:"peso",     n:"Peso"},
+  {k:"bmi",      n:"BMI",          u:"kg/m²"},
+  {k:"bf",       n:"Grasso"},
+  {k:"grassoKg", n:"Massa grassa"},
+  {k:"muscolo",  n:"Muscoli"},
+  {k:"acqua",    n:"Acqua"},
+  {k:"gv",       n:"Viscerale"},
+  {k:"gs",       n:"Sottocut."}
+];
+const unitaDi = k => k==="bmi" ? "kg/m²" : ((metaOf(k)||{}).u || "");
+
+function renderTable(tutte){
+  const tb=$("#tbl tbody"), rows=[...tutte].reverse();
+  $("#nMis").textContent = tutte.length ? `${tutte.length} rilevazioni` : "";
+  $("#tblEmpty").style.display = tutte.length?"none":"block";
+  $("#tbl").style.display = tutte.length?"":"none";
+  $("#tblNota").textContent = tutte.length
+    ? "Ogni variazione è calcolata sulla rilevazione precedente. Il pulsante ⌄ apre tutte le metriche di quel giorno."
+    : "";
+
+  $("#tblHead").innerHTML = "<th>Data</th>"
+    + COLTAB.map(c=>`<th>${c.n}<span class="u">${unitaDi(c.k)||"&nbsp;"}</span></th>`).join("")
+    + "<th></th><th></th>";
+
+  const giuDi = k => k==="bmi" ? 0 : (metaOf(k)||{}).giu;
+
+  /* cella a due righe: valore sopra, variazione sotto */
+  function cella(m,p,k,grassetto){
+    const v = valOf(m,k);
+    if(v==null) return `<td><span class="nv">—</span></td>`;
+    const pv = valOf(p,k), d = pv!=null ? v-pv : null;
+    return `<td><span class="nv"${grassetto?' style="font-weight:700"':""}>${num(v,dec(k))}</span>
+      <span class="dv">${d==null?'<span class="d nil">·</span>':delta(d,giuDi(k),dec(k))}</span></td>`;
+  }
+
+  tb.innerHTML = rows.map(m=>{
+    const i=tutte.indexOf(m), p=i>0?tutte[i-1]:null;
+
+    const det = MET.filter(x=>valOf(m,x.k)!=null).concat([{k:"bmi",n:"BMI",u:"",giu:0}]).map(x=>{
+      const v=valOf(m,x.k), pv=valOf(p,x.k);
+      return `<div><div class="k">${x.n}</div><div class="v">${num(v,dec(x.k))}
+        <span style="color:var(--dim2);font-size:12px">${x.u}</span>
+        <span style="margin-left:6px">${pv!=null?delta(v-pv,x.giu,dec(x.k)):'<span class="d nil">·</span>'}</span>
+      </div></div>`;
+    }).join("")
+      + (m.tipo?`<div><div class="k">Tipo di corpo</div><div class="v" style="font-size:13px">${m.tipo}</div></div>`:"")
+      + `<div><div class="k">Origine</div><div class="v" style="font-size:13px">${m.src==="bilancia"?"bilancia"+(m.ora?" · "+m.ora.slice(0,5):""):"inserimento manuale"}</div></div>`
+      + `<div><div class="k">Confronto con</div><div class="v" style="font-size:13px">${p?fmtL(p.data):"—"}</div></div>`
+      + (m.note?`<div style="grid-column:1/-1"><div class="k">Note</div><div class="v" style="font-size:13px">${m.note}</div></div>`:"");
+
+    return `<tr>
+      <td class="cdata">${fmtL(m.data)}
+        ${m.src==="bilancia"?'<span class="fonte" title="dalla bilancia">◈</span>':''}</td>
+      ${COLTAB.map(c=>cella(m,p,c.k,c.k==="peso")).join("")}
+      <td><button class="exp" data-e="${m.data}" title="Tutte le metriche">⌄</button></td>
+      <td><button class="del" data-d="${m.data}" title="Elimina">×</button></td>
+    </tr>
+    <tr class="det" data-r="${m.data}" style="display:none"><td colspan="11"><div class="dgrid">${det}</div></td></tr>`;
+  }).join("");
+  $$(".del").forEach(b=>b.onclick=()=>{
+    if(confirm("Eliminare la rilevazione del "+fmtL(b.dataset.d)+"?")){
+      S.mis=S.mis.filter(x=>x.data!==b.dataset.d); save(); render(); toast("Eliminata");
+    }});
+  $$(".exp").forEach(b=>b.onclick=()=>{
+    const r=document.querySelector(`tr.det[data-r="${b.dataset.e}"]`);
+    const op = r.style.display==="none";
+    r.style.display = op?"":"none"; b.textContent = op?"⌃":"⌄";
+  });
+}
+
+function renderPhases(){
+  const pa = pesoAttuale(), via = avviato();
+  $("#phaseList").innerHTML = SEED.fasi.map(f=>{
+    const st=phaseState(f), tot=days(f.da,f.a)+1, el=clamp(days(f.da,today())+1,0,tot);
+    const p = st==="done"?100:st==="now"?el/tot*100:0, ok = via && pa<=f.ob;
+    return `<div class="phase ${st==="now"?"now":st==="done"?"done":""}">
+      <div class="top">
+        <div><span class="nm">${f.n}</span>
+          <span class="tag ${st==="now"?"now":ok?"ok":""}" style="margin-left:8px">
+            ${st==="now"?"in corso":st==="done"?"conclusa":"da iniziare"}</span></div>
+        <div class="dt">${fmtL(f.da)} → ${fmtL(f.a)} · ${tot} giorni</div>
+      </div>
+      <p>${f.d}</p>
+      <div class="row" style="justify-content:space-between;font-size:13px;margin-bottom:6px">
+        <span style="color:var(--dim)">Obiettivo <b style="color:var(--txt)">${f.ob} kg</b></span>
+        <span style="color:${via&&ok?'var(--acc)':'var(--dim)'}">${
+          !via ? "in attesa della prima pesata" : ok ? "✓ obiettivo raggiunto" : `mancano ${num(pa-f.ob)} kg`}</span>
+      </div>
+      <div class="bar b2"><i style="width:${p}%"></i></div>
+    </div>`;
+  }).join("");
+}
+
+/* --- milestone: stessa impostazione delle fasi --- */
+function milestones(){
+  if(!avviato()) return [];
+  const pa = pesoAttuale(), prog = inProg();
+  const ms = milestoneDefs();
+  let prevW = PI(), primo = true;
+  const out = ms.map(m=>{
+    const hit = pa <= m.w;
+    const r = prog.find(x=>x.peso<=m.w);
+    const o = Object.assign({}, m, {
+      hit, quando: r?r.data:null, da: prevW, primo,
+      pct: clamp((PI()-pa)/Math.max(.1,PI()-m.w)*100, 0, 100)
+    });
+    prevW = m.w; primo = false; return o;
+  });
+  const i = out.findIndex(m=>!m.hit);
+  if(i>=0) out[i].next = true;
+  return out;
+}
+function renderMiles(){
+  const ms = milestones(), pa = pesoAttuale(), done = ms.filter(m=>m.hit).length;
+  $("#msDone").textContent=done; $("#msTot").textContent=ms.length;
+  $("#msBar").style.width = (ms.length ? done/ms.length*100 : 0)+"%";
+
+  if(!ms.length){
+    $("#msHint").textContent = "";
+    $("#msList").innerHTML = `<div class="card"><div class="empty">
+      I traguardi vengono costruiti sul tuo peso di partenza.<br>
+      Registra la prima pesata dal <b style="color:var(--txt)">Registro</b> e compariranno qui.</div></div>`;
+    return;
+  }
+
+  const nx = ms.find(m=>m.next);
+  $("#msHint").innerHTML = nx
+    ? `Prossimo: <b style="color:var(--txt)">${nx.n}</b> — mancano ${num(pa-nx.w)} kg`
+    : "Tutti i traguardi raggiunti.";
+
+  $("#msList").innerHTML = ms.map(m=>`
+    <div class="phase ${m.next?"now":m.hit?"done":""}">
+      <div class="top">
+        <div><span class="nm">${m.n}</span>
+          <span class="tag ${m.hit?"ok":m.next?"now":""}" style="margin-left:8px">
+            ${m.hit?"raggiunta":m.next?"prossima":"da raggiungere"}</span></div>
+        <div class="dt">${num(m.w)} kg · BMI ${num(bmi(m.w))}</div>
+      </div>
+      <p>${m.d}</p>
+      <div class="row" style="justify-content:space-between;font-size:13px;margin-bottom:6px">
+        <span style="color:${m.hit?'var(--acc)':'var(--dim)'}">
+          ${m.hit ? (m.quando?`✓ raggiunta il ${fmtL(m.quando)}`:"✓ raggiunta")
+                  : `mancano <b style="color:${m.next?'var(--warn)':'var(--txt)'}">${num(pa-m.w)} kg</b>`}</span>
+        <span style="color:var(--dim2)">${num(m.da-m.w)} kg ${m.primo?"dal peso iniziale":"dal traguardo precedente"}</span>
+      </div>
+      <div class="bar ${m.hit?"":m.next?"b3":"b2"}"><i style="width:${m.pct}%"></i></div>
+    </div>`).join("");
+}
+
+/* ================= grafici ================= */
+function mk(el,W,H){ el.setAttribute("viewBox",`0 0 ${W} ${H}`); el.setAttribute("preserveAspectRatio","none"); }
+function griglia(W,H,P,ymin,ymax,lab,unita){
+  let g="";
+  for(let i=0;i<=4;i++){
+    const y=P.t+(H-P.t-P.b)*i/4, v=ymax-(ymax-ymin)*i/4;
+    g+=`<line x1="${P.l}" y1="${y}" x2="${W-P.r}" y2="${y}" stroke="#243044"/>`;
+    if(lab) g+=`<text x="${P.l-6}" y="${y+3}" text-anchor="end">${lab(v)}</text>`;
+  }
+  if(unita) g+=`<text x="${P.l-6}" y="9" text-anchor="end" style="font-size:9px;opacity:.75">${unita}</text>`;
+  return g;
+}
+function datiRange(r){
+  const s = sorted();
+  if(r==="prog") return s.filter(m=>m.data>=S.inizio);
+  if(r==="12m"){ const d=iso(new Date(Date.now()-365*864e5)); return s.filter(m=>m.data>=d); }
+  return s;
+}
+function chartWeight(){
+  const el=$("#chartW"), W=960,H=280,P={l:40,r:12,t:20,b:24};
+  mk(el,W,H);
+  const s = datiRange(RANGE);
+  if(s.length<1){ el.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle" style="font-size:13px">Nessun dato in questo periodo</text>`; return; }
+  const prog = RANGE==="prog";
+  const d0 = s[0].data;
+  const dEnd = prog ? SEED.fasi[SEED.fasi.length-1].a : s[s.length-1].data;
+  const span = Math.max(1, days(d0,dEnd));
+  const X = d => P.l+(W-P.l-P.r)*clamp(days(d0,d),0,span)/span;
+  const vals = s.map(m=>m.peso).concat(prog?[S.pesoObiettivo,PI()]:[]);
+  const ymin=Math.min(...vals)-1, ymax=Math.max(...vals)+1;
+  const Y = v => P.t+(H-P.t-P.b)*(ymax-v)/(ymax-ymin);
+
+  let g = griglia(W,H,P,ymin,ymax,v=>v.toFixed(0),"kg");
+  if(prog){
+    const t=[]; for(let i=0;i<=60;i++){ const dd=iso(new Date(parse(d0).getTime()+span*i/60*864e5)); t.push([X(dd),Y(targetAt(dd))]); }
+    g+=`<polyline fill="none" stroke="#5aa9e6" stroke-width="2" stroke-dasharray="5 4" opacity=".75" points="${t.map(p=>p.join(",")).join(" ")}"/>`;
+  }
+  const pts = s.map(m=>[X(m.data),Y(m.peso)]);
+  g+=`<polygon fill="url(#gw)" points="${pts[0][0]},${H-P.b} ${pts.map(p=>p.join(",")).join(" ")} ${pts[pts.length-1][0]},${H-P.b}"/>`;
+  g+=`<polyline fill="none" stroke="#3ddc97" stroke-width="2.5" stroke-linejoin="round" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;
+  if(s.length>=5){
+    const mm=s.map((m,i)=>{ const w=s.slice(Math.max(0,i-6),i+1); return [X(m.data),Y(w.reduce((a,b)=>a+b.peso,0)/w.length)]; });
+    g+=`<polyline fill="none" stroke="#f5b942" stroke-width="1.8" opacity=".9" points="${mm.map(p=>p.join(",")).join(" ")}"/>`;
+  }
+  if(s.length<=60) pts.forEach(p=>g+=`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#0b0f14" stroke="#3ddc97" stroke-width="2"/>`);
+  const mid = iso(new Date((parse(d0).getTime()+parse(dEnd).getTime())/2));
+  [[d0,"start"],[mid,"middle"],[dEnd,"end"]].forEach(([t,a])=>
+    g+=`<text x="${X(t)}" y="${H-6}" text-anchor="${a}">${fmt(t)}</text>`);
+  el.innerHTML = `<defs><linearGradient id="gw" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#3ddc97" stop-opacity=".28"/>
+    <stop offset="100%" stop-color="#3ddc97" stop-opacity="0"/></linearGradient></defs>`+g;
+}
+function chartComp(){
+  const el=$("#chartC"), W=960,H=280,P={l:40,r:12,t:20,b:24};
+  mk(el,W,H);
+  const s = datiRange(RANGEC).filter(m=>METS.some(k=>valOf(m,k)!=null));
+  if(!METS.length || s.length<2){
+    el.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle" style="font-size:13px">${
+      !METS.length?"Scegli almeno una metrica":"Servono almeno 2 rilevazioni con questi dati"}</text>`;
+    $("#legC").innerHTML=""; return;
+  }
+  const d0=s[0].data, span=Math.max(1,days(d0,s[s.length-1].data));
+  const X = d => P.l+(W-P.l-P.r)*days(d0,d)/span;
+  const uno = METS.length===1;
+  let g="", leg=[];
+  if(uno){
+    const k=METS[0], m=metaOf(k), vv=s.map(x=>valOf(x,k)).filter(v=>v!=null);
+    const pad=(Math.max(...vv)-Math.min(...vv))*.12+.5;
+    const ymin=Math.min(...vv)-pad, ymax=Math.max(...vv)+pad;
+    const Y=v=>P.t+(H-P.t-P.b)*(ymax-v)/(ymax-ymin);
+    g += griglia(W,H,P,ymin,ymax,v=>v.toFixed(ymax-ymin>50?0:1), m.u||"");
+    const pts=s.filter(x=>valOf(x,k)!=null).map(x=>[X(x.data),Y(valOf(x,k))]);
+    g+=`<polyline fill="none" stroke="${m.c}" stroke-width="2.5" stroke-linejoin="round" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;
+    if(pts.length<=60) pts.forEach(p=>g+=`<circle cx="${p[0]}" cy="${p[1]}" r="2.8" fill="#0b0f14" stroke="${m.c}" stroke-width="2"/>`);
+    const a=vv[0], b=vv[vv.length-1];
+    leg.push(`<span><i style="background:${m.c}"></i>${m.n} — da ${num(a)} a ${num(b)} ${m.u} (${delta(b-a,m.giu)})</span>`);
+  }else{
+    g += griglia(W,H,P,0,1,null);
+    METS.forEach(k=>{
+      const m=metaOf(k), pts0=s.filter(x=>valOf(x,k)!=null);
+      if(pts0.length<2) return;
+      const vv=pts0.map(x=>valOf(x,k)), mn=Math.min(...vv), mx=Math.max(...vv), rg=(mx-mn)||1;
+      const Y=v=>P.t+(H-P.t-P.b)*(1-(v-mn)/rg)*0.88+ (H-P.t-P.b)*0.06;
+      const pts=pts0.map(x=>[X(x.data),Y(valOf(x,k))]);
+      g+=`<polyline fill="none" stroke="${m.c}" stroke-width="2.2" stroke-linejoin="round" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;
+      leg.push(`<span><i style="background:${m.c}"></i>${m.n} — da ${num(vv[0])} a ${num(vv[vv.length-1])} ${m.u} (${delta(vv[vv.length-1]-vv[0],m.giu)})</span>`);
+    });
+    g+=`<text x="${P.l-6}" y="${P.t+8}" text-anchor="end">max</text><text x="${P.l-6}" y="${H-P.b}" text-anchor="end">min</text>`;
+  }
+  g+=`<text x="${P.l}" y="${H-6}">${fmt(d0)}</text><text x="${W-P.r}" y="${H-6}" text-anchor="end">${fmt(s[s.length-1].data)}</text>`;
+  el.innerHTML=g;
+  $("#legC").innerHTML = leg.join("") + (uno?"":`<span style="color:var(--dim2)">scale normalizzate per confrontare gli andamenti</span>`);
+}
+
+/* ================= form e selettori ================= */
+function initForm(){
+  const campo = m => `<div class="field"><label>${m.n}${m.u?" ("+m.u+")":""}</label>
+    <input type="number" step="0.1" id="f_${m.k}" placeholder="opzionale"></div>`;
+  $("#fBase").innerHTML  = MET.filter(m=>m.base&&m.k!=="peso").map(campo).join("");
+  $("#fAltri").innerHTML = MET.filter(m=>!m.base&&!m.calc).map(campo).join("")
+    + `<div class="field"><label>Tipo di corpo</label><input type="text" id="f_tipo" placeholder="opzionale"></div>`;
+  $("#btnAltri").onclick = ()=>{
+    const d=$("#fAltri"), op=d.style.display==="none";
+    d.style.display = op?"grid":"none";
+    $("#btnAltri").textContent = op?"Altri parametri ▴":"Altri parametri ▾";
+  };
+  apriForm = v => {
+    $("#formWrap").style.display = v?"block":"none";
+    $("#btnApriForm").textContent = v?"Chiudi":"＋ Nuova rilevazione";
+    $("#btnApriForm").className = "btn sm"+(v?" ghost":"");
+    if(v) $("#f_peso").focus();
+  };
+  $("#btnApriForm").onclick = ()=> apriForm($("#formWrap").style.display==="none");
+  $("#btnChiudiForm").onclick = ()=> apriForm(false);
+  $("#fData").value = today();
+}
+function initSel(){
+  const periodi = [["prog","Programma"],["12m","12 mesi"],["all","Tutto"]];
+  const mkSel = (id, get, set, draw) => {
+    $(id).innerHTML = periodi.map(([k,n])=>`<button data-r="${k}" class="${get()===k?"on":""}">${n}</button>`).join("");
+    $$(id+" button").forEach(b=>b.onclick=()=>{
+      set(b.dataset.r); $$(id+" button").forEach(x=>x.classList.toggle("on",x===b)); draw();
+    });
+  };
+  mkSel("#rangeSel",  ()=>RANGE,  v=>RANGE=v,  chartWeight);
+  mkSel("#rangeSelC", ()=>RANGEC, v=>RANGEC=v, chartComp);
+  $("#metSel").innerHTML = MET.filter(m=>m.k!=="peso")
+    .map(m=>`<button data-k="${m.k}" class="${METS.includes(m.k)?"on":""}"><i style="background:${m.c}"></i>${m.n}</button>`).join("");
+  $$("#metSel button").forEach(b=>b.onclick=()=>{
+    const k=b.dataset.k;
+    METS = METS.includes(k) ? METS.filter(x=>x!==k) : METS.concat([k]);
+    b.classList.toggle("on"); chartComp();
+  });
+}
+
+/* ================= import bilancia (.xls) ================= */
+const COLS = [
+  [/^tempo|^time|^data|^date/, "data"],
+  [/sgrassat|fat.?free|magra/,  "lbm"],
+  [/peso standard|standard/,    null],
+  [/^peso|weight/,              "peso"],
+  [/^bmi/,                      "bmi"],
+  [/obesit/,                    null],           // duplicato del BMI
+  [/grasso corporeo|body fat/,  "bf"],
+  [/viscerale|visceral/,        "gv"],
+  [/sottocutane|subcutaneous/,  "gs"],
+  [/massa muscolare|muscle mass/,"muscolo"],
+  [/scheletric|skeletal/,       "scheletrico"],
+  [/rapporto muscolare|muscle rate/,"rapporto"],
+  [/acqua|water/,               "acqua"],
+  [/osse|ossa|bone/,            "ossa"],
+  [/bmr|metabolis/,             "bmr"],
+  [/protein/,                   "proteine"],
+  [/tipo di corpo|body type/,   "tipo"],
+  [/et.{0,2} del corpo|body age/,"eta"],
+  [/frequenza|heart/,           null]
+];
+const normHdr = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").trim();
+function mapCols(hdr){
+  return hdr.map(h=>{ const n=normHdr(h); const f=COLS.find(([re])=>re.test(n)); return f?f[1]:null; });
+}
+function numVal(v){
+  if(v==null) return null;
+  if(typeof v==="number") return isNaN(v)?null:v;
+  const s=String(v).trim();
+  if(!s||s==="--"||s==="-") return null;
+  const m=s.replace(",",".").match(/-?\d+(\.\d+)?/);
+  return m?parseFloat(m[0]):null;
+}
+function pulisciTipo(t){
+  const s=String(t||"").trim();
+  if(!s||s==="--") return null;
+  return /^Ti[A-Z]/.test(s) ? s.slice(2) : s;   // l'export scrive "TiMuscoloso ma sovrappeso"
+}
+
+function leggiBilancia(rows){
+  if(!rows.length) throw new Error("File vuoto.");
+  const map = mapCols(rows[0]);
+  if(!map.includes("data") || !map.includes("peso"))
+    throw new Error("Non trovo le colonne data e peso. È l'export giusto della bilancia?");
+  const letture = [];
+  for(let r=1;r<rows.length;r++){
+    const o = {}; let ts=null;
+    map.forEach((k,c)=>{
+      if(!k) return;
+      const raw = rows[r][c];
+      if(k==="data"){ ts=String(raw||"").trim(); return; }
+      if(k==="tipo"){ o.tipo = pulisciTipo(raw); return; }
+      const v = numVal(raw);
+      o[k] = (v==null||v===0) ? null : v;        // 0 = pesata senza impedenza
+    });
+    if(!ts || !o.peso) continue;
+    const mm = ts.match(/(\d{4})[-\/](\d{2})[-\/](\d{2})[ T]?(\d{2}:\d{2}(:\d{2})?)?/);
+    if(!mm) continue;
+    o.data = `${mm[1]}-${mm[2]}-${mm[3]}`;
+    o.ora  = mm[4] || "";
+    o.src  = "bilancia";
+    delete o.bmi;                                 // lo ricalcoliamo dall'altezza
+    letture.push(o);
+  }
+  if(!letture.length) throw new Error("Nessuna pesata valida trovata nel file.");
+
+  const perGiorno = new Map();
+  letture.forEach(m=>{
+    m.id = m.data+"T"+(m.ora||"");
+    m.campi = MET.reduce((n,x)=> n + (m[x.k]!=null?1:0), 0);
+    const p = perGiorno.get(m.data);
+    if(!p || m.campi>p.campi || (m.campi===p.campi && (m.ora||"") < (p.ora||"")))
+      perGiorno.set(m.data, m);
+  });
+  [...perGiorno.values()].forEach(m=> m.consigliata = true);
+  letture.sort((a,b)=> a.id<b.id ? 1 : a.id>b.id ? -1 : 0);   // più recenti in cima
+  const giorni = [...perGiorno.values()].sort((a,b)=>a.data<b.data?-1:1);
+  return {letture, giorni};
+}
+
+function anteprima(res){
+  IMP = res;
+  IMP.sel = new Set(res.letture.filter(m=>m.consigliata).map(m=>m.id));
+  const dal = res.giorni[0].data, al = res.giorni[res.giorni.length-1].data;
+
+  $("#impBox").innerHTML = `
+    <div class="box">
+      <div class="row" style="justify-content:space-between;margin-bottom:12px">
+        <b>${res.letture.length} pesate lette in ${res.giorni.length} giorni</b>
+        <span class="tag">${fmtL(dal)} → ${fmtL(al)}</span>
+      </div>
+
+      <label>Quali pesate importare</label>
+      <div class="sel" style="margin-bottom:8px">
+        <button data-s="cons">Consigliate</button>
+        <button data-s="nuove">Solo giorni nuovi</button>
+        <button data-s="tutte">Tutte</button>
+        <button data-s="nessuna">Nessuna</button>
+      </div>
+      <div class="lst" id="impLst"></div>
+      <div class="hint" id="impRiep" style="margin-bottom:12px"></div>
+
+      <div class="field"><label>Se il giorno è già registrato nell'app</label>
+        <select id="impModo">
+          <option value="salta">Lasciare com'è, aggiungere solo i giorni nuovi</option>
+          <option value="sovrascrivi">Sostituirlo con la pesata selezionata</option>
+        </select></div>
+      <div class="row">
+        <button class="btn" id="btnImpOk">Importa</button>
+        <button class="btn ghost" id="btnImpNo">Annulla</button>
+      </div>
+    </div>`;
+
+  const esistenti = () => new Set(S.mis.map(m=>m.data));
+
+  function lista(){
+    const ex = esistenti();
+    $("#impLst").innerHTML = res.letture.map(m=>{
+      const on = IMP.sel.has(m.id);
+      const comp = m.bf!=null;
+      return `<label class="lrow${on?" on":""}" data-id="${m.id}">
+        <input type="checkbox" ${on?"checked":""}>
+        <span class="ld">${fmtL(m.data)}<span class="lo">${m.ora?m.ora.slice(0,5):""}</span></span>
+        <span class="lw">${num(m.peso)} kg</span>
+        <span class="lt">
+          ${comp?`<span class="tag" style="font-size:9px">${m.campi} valori</span>`
+                :`<span class="tag warn" style="font-size:9px">solo peso</span>`}
+          ${ex.has(m.data)?`<span class="tag warn" style="font-size:9px">già presente</span>`
+                          :`<span class="tag ok" style="font-size:9px">nuovo</span>`}
+        </span></label>`;
+    }).join("");
+    $$("#impLst .lrow").forEach(r=>{
+      r.querySelector("input").onchange = e=>{
+        const id = r.dataset.id;
+        if(e.target.checked) IMP.sel.add(id); else IMP.sel.delete(id);
+        r.classList.toggle("on", e.target.checked);
+        riepilogo();
+      };
+    });
+    riepilogo();
+  }
+
+  function riepilogo(){
+    const ex = esistenti();
+    const scelte = res.letture.filter(m=>IMP.sel.has(m.id));
+    const gg = new Set(scelte.map(m=>m.data));
+    const dupl = scelte.length - gg.size;
+    const nuoviG = [...gg].filter(d=>!ex.has(d)).length;
+    $("#impRiep").innerHTML =
+      `<b style="color:var(--txt)">${scelte.length}</b> pesate selezionate su ${res.letture.length} — `+
+      `${gg.size} giorni (<span style="color:var(--acc)">${nuoviG} nuovi</span>, `+
+      `<span style="color:var(--warn)">${gg.size-nuoviG} già presenti</span>)`+
+      (dupl?`<br>In ${dupl} cas${dupl===1?"o":"i"} hai scelto più pesate nello stesso giorno: verrà tenuta la più completa.`:"");
+  }
+
+  $$("#impBox .sel button").forEach(b=>b.onclick=()=>{
+    const ex = esistenti(), s = b.dataset.s;
+    IMP.sel = new Set(
+      s==="tutte"   ? res.letture.map(m=>m.id)
+    : s==="nessuna" ? []
+    : s==="cons"    ? res.letture.filter(m=>m.consigliata).map(m=>m.id)
+    :                 res.letture.filter(m=>m.consigliata && !ex.has(m.data)).map(m=>m.id));
+    lista();
+  });
+
+  $("#btnImpNo").onclick = ()=>{ IMP=null; $("#impBox").innerHTML=""; };
+  $("#btnImpOk").onclick = ()=>{
+    const modo = $("#impModo").value;
+    const scelte = res.letture.filter(m=>IMP.sel.has(m.id));
+    if(!scelte.length) return toast("Non hai selezionato nessuna pesata",1);
+
+    const perGiorno = new Map();                       // se più pesate nello stesso giorno, la più completa
+    scelte.forEach(m=>{
+      const p = perGiorno.get(m.data);
+      if(!p || m.campi>p.campi || (m.campi===p.campi && (m.ora||"")<(p.ora||""))) perGiorno.set(m.data,m);
+    });
+
+    const idx = new Map(S.mis.map(m=>[m.data,m]));
+    let add=0, upd=0, skip=0;
+    perGiorno.forEach(m=>{
+      const pulita = {}; Object.keys(m).forEach(k=>{ if(k!=="id"&&k!=="campi"&&k!=="consigliata") pulita[k]=m[k]; });
+      const old = idx.get(m.data);
+      if(!old){ S.mis.push(Object.assign({note:""}, pulita)); add++; }
+      else if(modo==="sovrascrivi"){ Object.assign(old, pulita, {note: old.note||""}); upd++; }
+      else skip++;
+    });
+
+    IMP=null; $("#impBox").innerHTML="";
+    save(); render();
+    toast(`${add} rilevazioni aggiunte`+(upd?`, ${upd} aggiornate`:"")+(skip?`, ${skip} saltate`:""));
+  };
+
+  lista();
+}
+
+$("#btnXls").onclick = ()=> $("#fileXls").click();
+$("#fileXls").onchange = e=>{
+  const f = e.target.files[0]; e.target.value="";
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{ anteprima(leggiBilancia(readXls(r.result))); }
+    catch(err){ $("#impBox").innerHTML=""; toast(err.message,1); }
+  };
+  r.onerror = ()=> toast("Impossibile leggere il file",1);
+  r.readAsArrayBuffer(f);
+};
+
+/* ================= eventi ================= */
+$$("nav button").forEach(b=>b.onclick=()=>{
+  $$("nav button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+  $$("section").forEach(x=>x.classList.remove("on")); $("#"+b.dataset.t).classList.add("on");
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+$("#btnSave").onclick = ()=>{
+  const data=$("#fData").value, peso=parseFloat($("#f_peso").value);
+  if(!data) return toast("Inserisci la data",1);
+  if(!peso||peso<=0) return toast("Inserisci un peso valido",1);
+  const rec = {data, peso, src:"manuale", ora:"", note:$("#f_note").value.trim()};
+  MET.forEach(m=>{
+    if(m.calc||m.k==="peso") return;
+    const el=$("#f_"+m.k); if(!el) return;
+    const v=parseFloat(el.value); rec[m.k]=isNaN(v)?null:v;
+  });
+  const t=$("#f_tipo"); if(t&&t.value.trim()) rec.tipo=t.value.trim();
+  S.mis = S.mis.filter(m=>m.data!==data); S.mis.push(rec);
+  save(); render();
+  $$("#reg input[type=number],#f_note,#f_tipo").forEach(i=>i.value="");
+  $("#fData").value = today();
+  apriForm(false);
+  toast("Rilevazione salvata");
+};
+
+$("#btnSet").onclick = ()=>{
+  S.altezza=parseFloat($("#sAlt").value)||SEED.altezza;
+  S.pesoObiettivo=parseFloat($("#sPo").value)||SEED.pesoObiettivo;
+  S.inizio=$("#sInizio").value||SEED.inizio;
+  save(); render(); toast("Parametri aggiornati");
+};
+
+function dl(name,content,type){
+  const u=URL.createObjectURL(new Blob([content],{type})), a=document.createElement("a");
+  a.href=u; a.download=name; a.click(); URL.revokeObjectURL(u);
+}
+$("#btnExpJ").onclick = ()=> dl(`rinascita-${today()}.json`, JSON.stringify(S,null,2), "application/json");
+$("#btnExpC").onclick = ()=>{
+  const cols = ["data","ora"].concat(MET.filter(m=>!m.calc).map(m=>m.k)).concat(["tipo","src","note"]);
+  const head = ["Data","Ora"].concat(MET.filter(m=>!m.calc).map(m=>m.n+(m.u?" ("+m.u+")":""))).concat(["Tipo di corpo","Origine","Note"]);
+  const rows = [head.concat(["BMI"])];
+  sorted().forEach(m=>rows.push(cols.map(c=>{
+    const v=m[c]; return v==null?"":String(v).replace(/;/g,",");
+  }).concat([num(bmi(m.peso))])));
+  dl(`rinascita-${today()}.csv`, "﻿"+rows.map(r=>r.join(";")).join("\n"), "text/csv;charset=utf-8");
+};
+$("#btnImp").onclick = ()=> $("#fileImp").click();
+$("#fileImp").onchange = e=>{
+  const f=e.target.files[0]; e.target.value=""; if(!f) return;
+  const r=new FileReader();
+  r.onload = ()=>{ try{
+      const o=JSON.parse(r.result);
+      if(!Array.isArray(o.mis)) throw 0;
+      S=Object.assign(base(),o); save(); render(); toast("Dati importati");
+    }catch(_){ toast("File non valido",1); } };
+  r.readAsText(f);
+};
+$("#btnReset").onclick = ()=>{
+  if(confirm("Cancellare tutte le rilevazioni e i parametri? L'operazione non è reversibile.")){
+    localStorage.removeItem(KEY); S=base(); save(); render(); toast("Dati cancellati");
+  }
+};
+
+boot();
+</script>
+</body>
+</html>

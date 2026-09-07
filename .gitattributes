@@ -1,0 +1,8 @@
+# Fine riga LF ovunque: gli script devono girare su Linux
+* text=auto eol=lf
+
+# I batch di Windows vogliono CRLF
+*.bat text eol=crlf
+
+*.xls  binary
+*.xlsx binary
