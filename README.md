@@ -1,8 +1,8 @@
 # Rinascita
 
-Dashboard per seguire una trasformazione fisica: peso, composizione corporea,
-fasi del programma e traguardi. Una pagina sola, nessuna dipendenza, i dati
-restano su un server tuo.
+Dashboard per seguire una trasformazione fisica: peso, composizione corporea
+e traguardi. Una pagina sola, nessuna dipendenza, i dati restano su un
+server tuo.
 
 Nasce da un foglio di calcolo e legge direttamente gli export `.xls` delle
 bilance impedenziometriche (testata con INSMART Health).
@@ -11,8 +11,8 @@ bilance impedenziometriche (testata con INSMART Health).
 
 ## Cosa fa
 
-**Dashboard** — peso attuale, chili persi, BMI, distanza dall'obiettivo, fase
-in corso, grafico del peso con la traiettoria prevista e media mobile, grafico
+**Dashboard** — peso attuale, chili persi, BMI, distanza dall'obiettivo,
+grafico del peso con la traiettoria verso l'obiettivo e media mobile, grafico
 della composizione corporea con 14 metriche selezionabili, statistiche
 (media settimanale, ritmo giornaliero, data stimata di arrivo, anticipo o
 ritardo sulla traiettoria).
@@ -20,8 +20,6 @@ ritardo sulla traiettoria).
 **Registro** — storico completo con la variazione di ogni metrica rispetto
 alla rilevazione precedente, dettaglio giorno per giorno, inserimento manuale
 e riepilogo settimanale.
-
-**Fasi** — le tappe del programma con date, obiettivo di peso e avanzamento.
 
 **Traguardi** — costruiti automaticamente dal peso di partenza: i `-5 kg`,
 `-10 kg`…, le soglie BMI (obesità, sovrappeso, normopeso) calcolate
