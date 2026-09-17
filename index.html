@@ -157,6 +157,32 @@
   .tag.now{color:#06231a;background:var(--acc);border-color:var(--acc)}
   .tag.warn{color:var(--warn);border-color:#4a3a1c}
 
+  /* ---------- calendario abitudini ---------- */
+  .gcal{display:grid;gap:12px;grid-template-columns:1.9fr 1fr;align-items:start}
+  @media(max-width:900px){.gcal{grid-template-columns:1fr}}
+  .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .calh{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim2);
+    text-align:center;padding-bottom:2px;font-weight:700}
+  .cell{min-height:60px;border:1px solid var(--line);border-radius:10px;background:#0d141d;
+    padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;
+    transition:background .12s,border-color .12s}
+  .cell:hover{border-color:var(--dim2);background:#121b27}
+  .cell.oggi{border-color:var(--acc2)}
+  .cell.sel{border-color:var(--acc);background:rgba(61,220,151,.08);box-shadow:0 0 0 1px rgba(61,220,151,.35)}
+  .cell.futuro{opacity:.4}
+  .cell .n{font-size:13px;font-variant-numeric:tabular-nums;line-height:1;color:var(--dim)}
+  .cell.oggi .n{color:var(--acc);font-weight:700}
+  .cell .pt{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;max-width:100%}
+  .cell .pt i{width:7px;height:7px;border-radius:99px;display:block}
+  .tgl{display:flex;align-items:center;gap:9px;width:100%;padding:10px 13px;margin-bottom:7px;
+    border-radius:10px;border:1px solid var(--line);background:#0d141d;color:var(--dim);
+    cursor:pointer;font:inherit;font-size:14px;font-weight:600;text-align:left}
+  .tgl:hover{border-color:var(--dim2)}
+  .tgl i{width:10px;height:10px;border-radius:99px;flex:none;background:var(--c,var(--dim2));opacity:.4}
+  .tgl.on i{opacity:1}
+  .tgl.pulisci{justify-content:center;color:var(--dim2);font-size:13px;font-weight:600;margin-top:4px}
+  .tgl.pulisci:hover{color:var(--bad)}
+
   .chip{font-size:11px;font-weight:700;letter-spacing:.04em;padding:5px 11px;border-radius:99px;
     background:#0d141d;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
   .chip.ok{color:var(--acc);border-color:#1e4636}
@@ -239,6 +265,7 @@
 <nav><div class="wrap">
   <button data-t="dash" class="on">Dashboard</button>
   <button data-t="reg">Registro</button>
+  <button data-t="cal">Calendario</button>
   <button data-t="mile">Milestone</button>
   <button data-t="set">Impostazioni</button>
 </div></nav>
@@ -321,6 +348,37 @@
     <div class="card" style="margin-top:12px">
       <h2>Riepilogo settimanale <span class="r">media delle pesate di ogni settimana</span></h2>
       <div id="last7"></div>
+    </div>
+  </section>
+
+  <!-- ============ CALENDARIO ============ -->
+  <section id="cal">
+    <div class="grid g4" id="streaks" style="margin-bottom:12px"></div>
+
+    <div class="gcal">
+      <div class="card">
+        <div class="row" style="justify-content:space-between;margin-bottom:14px">
+          <h2 style="margin:0" id="calTitolo"></h2>
+          <div class="row" style="gap:6px">
+            <button class="btn ghost sm" id="calPrev" title="Mese precedente">‹</button>
+            <button class="btn ghost sm" id="calOggi">Oggi</button>
+            <button class="btn ghost sm" id="calNext" title="Mese successivo">›</button>
+          </div>
+        </div>
+        <div class="calgrid" id="calGrid"></div>
+        <div class="legend" id="calLeg" style="margin-top:14px"></div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:12px">
+          <h2>Giorno <span class="r" id="giornoData"></span></h2>
+          <div id="giornoTgl"></div>
+        </div>
+        <div class="card">
+          <h2>Riepilogo <span class="r" id="meseNome"></span></h2>
+          <div id="meseRiep"></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -470,7 +528,7 @@ let RANGE = "prog", RANGEC = "all", METS = ["bf","muscolo"], IMP = null, apriFor
 
 function base(){
   return {altezza:SEED.altezza, pesoObiettivo:SEED.pesoObiettivo,
-          inizio:SEED.inizio, fine:SEED.fine, mis:[]};
+          inizio:SEED.inizio, fine:SEED.fine, mis:[], giorni:{}};
 }
 function loadLocal(){
   try{
@@ -514,7 +572,8 @@ async function boot(){
       else await push();
     }
   }catch(e){ MODE="local"; }
-  initForm(); initSel(); render(); stato();
+  if(!S.giorni) S.giorni = {};
+  initForm(); initSel(); initCal(); render(); stato();
 }
 window.addEventListener("beforeunload", e=>{ if(MODE==="file"&&(dirty||saving)){ e.preventDefault(); e.returnValue=""; }});
 
@@ -620,7 +679,7 @@ function render(){
   renderStats(s); renderUltima(tutte);
   chartWeight(); chartComp();
   renderTable(tutte); renderLast(tutte);
-  renderMiles();
+  renderMiles(); renderStreaks(); renderCal();
 
   const fonte = PIfonte();
   $("#sPiVal").innerHTML = fonte
@@ -1174,6 +1233,184 @@ $("#fileXls").onchange = e=>{
   r.onerror = ()=> toast("Impossibile leggere il file",1);
   r.readAsArrayBuffer(f);
 };
+
+/* ================= calendario abitudini ================= */
+const TAG = [
+  {k:"dieta",  n:"Dieta",         c:"#3ddc97"},
+  {k:"allen",  n:"Allenamento",   c:"#5aa9e6"},
+  {k:"passi",  n:"10.000 passi",  c:"#b388f5"},
+  {k:"sgarro", n:"Sgarro",        c:"#ef6461"},
+  {k:"riposo", n:"Riposo",        c:"#f5b942"}
+];
+const tagOf     = k => TAG.find(t=>t.k===k);
+const piuGiorni = (d,n) => iso(new Date(parse(d).getTime()+n*864e5));
+const tagsDi    = d => (S.giorni && S.giorni[d]) || [];
+const ha        = (d,k) => tagsDi(d).indexOf(k) >= 0;
+const velo      = (hex,a) => { const v=parseInt(hex.slice(1),16);
+  return `rgba(${v>>16&255},${v>>8&255},${v&255},${a})`; };
+
+let calMese = today().slice(0,7);
+let calSel  = today();
+
+/* Una streak avanza sui giorni "ok". Un giorno "tollerato" — uno sgarro per la
+   dieta, un riposo per l'allenamento — non la allunga ma non la spezza:
+   due tollerati di fila la azzerano. */
+const STREAK = [
+  {k:"dieta", n:"Dieta", c:"#3ddc97",
+   ok:d=>ha(d,"dieta"), tol:d=>ha(d,"sgarro"),
+   nota:"uno sgarro passa, due di fila no"},
+  {k:"allen", n:"Allenamento", c:"#5aa9e6",
+   ok:d=>ha(d,"allen"), tol:d=>ha(d,"riposo"),
+   nota:"un riposo passa, due di fila no"},
+  {k:"passi", n:"10.000 passi", c:"#b388f5",
+   ok:d=>ha(d,"passi"),
+   nota:"serve tutti i giorni"},
+  {k:"tutto", n:"Complessiva", c:"#f5b942",
+   ok:d=>["dieta","allen","passi"].filter(k=>ha(d,k)).length>=2,
+   nota:"almeno 2 su 3 nella giornata"}
+];
+
+/* All'indietro da oggi. Se oggi non e' ancora segnato non conta come rottura:
+   la giornata non e' finita. */
+function streakAttuale(s){
+  let n=0, tol=0, d=today(), primo=true;
+  for(let i=0;i<1500;i++){
+    const t = tagsDi(d);
+    if(s.ok(d)){ n++; tol=0; }
+    else if(s.tol && s.tol(d)){ if(++tol>=2) break; }
+    else if(primo && !t.length){ /* oggi ancora da segnare */ }
+    else break;
+    primo = false;
+    d = piuGiorni(d,-1);
+  }
+  return n;
+}
+
+function streakRecord(s){
+  const date = Object.keys(S.giorni||{}).sort();
+  if(!date.length) return 0;
+  let max=0, n=0, tol=0, d=date[0];
+  const fine = today();
+  for(let i=0;i<4000 && d<=fine;i++){
+    if(s.ok(d)){ n++; tol=0; if(n>max) max=n; }
+    else if(s.tol && s.tol(d)){ if(++tol>=2){ n=0; tol=0; } }
+    else { n=0; tol=0; }
+    d = piuGiorni(d,1);
+  }
+  return max;
+}
+
+function renderStreaks(){
+  $("#streaks").innerHTML = STREAK.map(s=>{
+    const n = streakAttuale(s), r = streakRecord(s);
+    return `<div class="card kpi">
+      <div class="lbl"><i style="display:inline-block;width:8px;height:8px;border-radius:99px;
+        background:${s.c};margin-right:7px"></i>${s.n}</div>
+      <div class="val" style="color:${n?s.c:"var(--dim2)"}">${n}<small>giorn${n===1?"o":"i"}</small></div>
+      <div class="note">record ${r} · ${s.nota}</div>
+    </div>`;
+  }).join("");
+}
+
+function renderCal(){
+  const [Y,M] = calMese.split("-").map(Number);
+  const primo = new Date(Y, M-1, 1);
+  const quanti = new Date(Y, M, 0).getDate();
+  const off = (primo.getDay()+6)%7;              // lunedi = prima colonna
+  const oggi = today();
+  const dd = g => `${Y}-${String(M).padStart(2,"0")}-${String(g).padStart(2,"0")}`;
+
+  let h = ["lun","mar","mer","gio","ven","sab","dom"].map(x=>`<div class="calh">${x}</div>`).join("");
+  for(let i=0;i<off;i++) h += "<div></div>";
+  for(let g=1; g<=quanti; g++){
+    const data = dd(g), t = tagsDi(data);
+    const cls = ["cell"];
+    if(data===oggi)   cls.push("oggi");
+    if(data===calSel) cls.push("sel");
+    if(data>oggi)     cls.push("futuro");
+    h += `<div class="${cls.join(" ")}" data-d="${data}">
+      <span class="n">${g}</span>
+      <span class="pt">${t.map(k=>{const x=tagOf(k);
+        return x?`<i style="background:${x.c}" title="${x.n}"></i>`:"";}).join("")}</span></div>`;
+  }
+  $("#calGrid").innerHTML = h;
+
+  const nomeMese = primo.toLocaleDateString("it-IT",{month:"long",year:"numeric"});
+  $("#calTitolo").textContent = nomeMese.charAt(0).toUpperCase()+nomeMese.slice(1);
+  $("#calLeg").innerHTML = TAG.map(x=>
+    `<span><i style="background:${x.c};width:8px;height:8px;border-radius:99px"></i>${x.n}</span>`).join("");
+
+  renderGiorno();
+  renderMese(Y, M, quanti, dd);
+}
+
+function renderGiorno(){
+  const t = tagsDi(calSel), oggi = today();
+  $("#giornoData").textContent = calSel===oggi ? "oggi" : fmtL(calSel);
+  $("#giornoTgl").innerHTML = TAG.map(x=>{
+    const on = t.indexOf(x.k)>=0;
+    const stile = `--c:${x.c}` + (on?`;border-color:${x.c};background:${velo(x.c,.12)};color:var(--txt)`:"");
+    return `<button class="tgl${on?" on":""}" data-k="${x.k}" style="${stile}"><i></i>${x.n}</button>`;
+  }).join("")
+  + (t.length ? `<button class="tgl pulisci" data-k="">Togli tutto da questo giorno</button>` : "")
+  + `<div class="hint" style="text-align:center">${calSel>oggi
+      ? "Giorno futuro: puoi segnarlo lo stesso."
+      : fmtL(calSel)}</div>`;
+
+  $$("#giornoTgl .tgl").forEach(b=>b.onclick=()=>{
+    const k = b.dataset.k;
+    const att = tagsDi(calSel).slice();
+    let nuovi;
+    if(!k) nuovi = [];
+    else nuovi = att.indexOf(k)>=0 ? att.filter(x=>x!==k) : att.concat([k]);
+    if(nuovi.length) S.giorni[calSel] = TAG.filter(x=>nuovi.indexOf(x.k)>=0).map(x=>x.k);
+    else delete S.giorni[calSel];
+    save(); renderStreaks(); renderCal();
+  });
+}
+
+function renderMese(Y, M, quanti, dd){
+  const conta = {}; TAG.forEach(x=>conta[x.k]=0);
+  let complete = 0, segnati = 0;
+  for(let g=1; g<=quanti; g++){
+    const t = tagsDi(dd(g));
+    if(t.length) segnati++;
+    t.forEach(k=>{ if(k in conta) conta[k]++; });
+    if(["dieta","allen","passi"].every(k=>t.indexOf(k)>=0)) complete++;
+  }
+  const mese = new Date(Y,M-1,1).toLocaleDateString("it-IT",{month:"long"});
+  $("#meseNome").textContent = `${segnati} giorni segnati su ${quanti}`;
+  $("#meseRiep").innerHTML = TAG.map(x=>`
+    <div class="row" style="justify-content:space-between;padding:7px 0;border-bottom:1px solid #1b2432">
+      <span style="font-size:14px"><i style="display:inline-block;width:8px;height:8px;border-radius:99px;
+        background:${x.c};margin-right:9px"></i>${x.n}</span>
+      <span style="font-variant-numeric:tabular-nums"><b>${conta[x.k]}</b>
+        <span style="color:var(--dim2);font-size:12px">su ${quanti}</span></span>
+    </div>`).join("")
+  + `<div class="row" style="justify-content:space-between;padding:10px 0 0">
+      <span style="font-size:14px;color:var(--acc)">Giornate complete</span>
+      <span style="font-variant-numeric:tabular-nums;color:var(--acc)"><b>${complete}</b></span>
+     </div>
+     <div class="hint">Giornata completa = dieta, allenamento e passi nello stesso giorno di ${mese}.</div>`;
+}
+
+function initCal(){
+  const spostaMese = n => {
+    const [Y,M] = calMese.split("-").map(Number);
+    const d = new Date(Y, M-1+n, 1);
+    calMese = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+    renderCal();
+  };
+  $("#calPrev").onclick = ()=> spostaMese(-1);
+  $("#calNext").onclick = ()=> spostaMese(1);
+  $("#calOggi").onclick = ()=>{ calMese = today().slice(0,7); calSel = today(); renderCal(); };
+  $("#calGrid").onclick = e=>{
+    const c = e.target.closest(".cell");
+    if(!c) return;
+    calSel = c.dataset.d;
+    renderCal();
+  };
+}
 
 /* ================= eventi ================= */
 $$("nav button").forEach(b=>b.onclick=()=>{

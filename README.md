@@ -1,7 +1,7 @@
 # Rinascita
 
-Dashboard per seguire una trasformazione fisica: peso, composizione corporea
-e traguardi. Una pagina sola, nessuna dipendenza, i dati restano su un
+Dashboard per seguire una trasformazione fisica: peso, composizione corporea,
+abitudini quotidiane e traguardi. Una pagina sola, nessuna dipendenza, i dati restano su un
 server tuo.
 
 Nasce da un foglio di calcolo e legge direttamente gli export `.xls` delle
@@ -20,6 +20,12 @@ ritardo sulla traiettoria).
 **Registro** — storico completo con la variazione di ogni metrica rispetto
 alla rilevazione precedente, dettaglio giorno per giorno, inserimento manuale
 e riepilogo settimanale.
+
+**Calendario** — un mese alla volta, segni i giorni con dieta, allenamento,
+10.000 passi, sgarro e riposo. In cima quattro streak: una per abitudine e
+una complessiva. Uno sgarro isolato non spezza la streak della dieta, due di
+fila sì; stessa regola per il riposo sull'allenamento. La complessiva conta
+i giorni con almeno 2 tra dieta, allenamento e passi.
 
 **Traguardi** — costruiti automaticamente dal peso di partenza: i `-5 kg`,
 `-10 kg`…, le soglie BMI (obesità, sovrappeso, normopeso) calcolate
