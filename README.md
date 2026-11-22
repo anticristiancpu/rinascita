@@ -28,15 +28,20 @@ fila sì; stessa regola per il riposo sull'allenamento. La complessiva conta
 i giorni con almeno 2 tra dieta, allenamento e passi.
 
 **Foto** — per ogni sessione tre pose: frontale, laterale e retro. Confronto
-tra due sessioni a scelta, affiancate o con un cursore che scorre dal prima al
-dopo, su una posa o su tutte e tre insieme, con la variazione di peso, grasso e
+tra due sessioni a scelta, affiancate, con un cursore che scorre dal prima al
+dopo o sovrapposte in trasparenza, su una posa o su tutte e tre insieme, con la variazione di peso, grasso e
 muscoli tra le due date (presa dalla pesata più vicina, entro 3 giorni).
 La sequenza di una singola posa mostra tutta la trasformazione in ordine; a
 tutto schermo si sfoglia con le frecce o con lo swipe. Con **Allinea** ogni
 foto si zooma e si sposta (trascinando, con la rotella o con il pizzico)
 tenendo in trasparenza un'altra foto della stessa posa come riferimento, così
 le proporzioni combaciano; l'inquadratura vale in tutte le viste e
-l'originale resta intatto. Le foto vengono
+l'originale resta intatto. **Allinea automaticamente** riconosce spalle,
+bacino, ginocchia e caviglie nelle due foto e calcola zoom e spostamento da
+solo: il riconoscitore ([MediaPipe Pose](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker),
+circa 10 MB) viene scaricato da Internet solo al primo utilizzo e gira nel
+browser, le foto non vengono inviate a nessuno. È l'unica funzione che ha
+bisogno della rete. Le foto vengono
 ridimensionate (lato lungo 1600 px) e ripulite dai dati EXIF, GPS compreso,
 già nel browser prima dell'invio. Serve il server: aprendo `index.html` a mano
 la sezione resta disattivata.

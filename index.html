@@ -269,6 +269,7 @@
     grid-column:1/-1;margin-top:4px}
   .cur{--p:50%;user-select:none;touch-action:pan-y}
   .cur .sopra{position:absolute;inset:0;z-index:1;clip-path:inset(0 calc(100% - var(--p)) 0 0)}
+  .tra .sopra{position:absolute;inset:0;z-index:1;opacity:var(--o)}
   .cur .linea{position:absolute;top:0;bottom:0;left:var(--p);width:2px;margin-left:-1px;background:var(--acc);
     z-index:2;pointer-events:none;box-shadow:0 0 10px rgba(61,220,151,.6)}
   .cur .linea::after{content:"⟷";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
@@ -472,6 +473,7 @@
           <div class="sel" id="cmpModo">
             <button data-m="aff" class="on">Affiancate</button>
             <button data-m="cur">Cursore</button>
+            <button data-m="tra">Trasparenza</button>
           </div>
         </div>
         <div id="cmpVuoto" class="empty">Aggiungi almeno due sessioni di foto per confrontarle.</div>
@@ -603,6 +605,11 @@
         <input type="range" id="alZoom" min="0.5" max="4" step="0.01"></div>
       <div class="field"><label>Foto di riferimento</label>
         <select id="alRifSel"></select></div>
+      <div class="field">
+        <button class="btn ghost" id="alAuto" style="width:100%">✨ Allinea automaticamente</button>
+        <div class="hint" id="alAutoH">Riconosce spalle, bacino, ginocchia e caviglie nelle due foto e le fa
+          combaciare. La prima volta scarica il riconoscitore da Internet (circa 10 MB); le foto non escono dal browser.</div>
+      </div>
       <div class="field" id="alOpWrap"><label>Trasparenza del riferimento <span id="alOv" style="float:right;color:var(--txt)"></span></label>
         <input type="range" id="alOp" min="0" max="100" step="1" value="40"></div>
       <label class="lrow" style="border:1px solid var(--line);border-radius:10px;margin-bottom:14px;text-transform:none;letter-spacing:0;font-size:13px;color:var(--dim)">
@@ -1601,7 +1608,7 @@ const esc = s => String(s==null?"":s).replace(/[&<>"']/g,
   c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const urlFoto = f => "/api/foto/"+encodeURIComponent(f);
 
-let CMP = {a:null, b:null, posa:"frontale", modo:"aff"};
+let CMP = {a:null, b:null, posa:"frontale", modo:"aff", op:50};
 let GAL = "sess";
 let FF  = null;     // form aperto: {orig, slot:{posa:{file|blob,url}}, daEliminare:Set, posa}
 let LB  = null;     // lightbox aperto: {p, lista, i}
@@ -1673,11 +1680,23 @@ function cursore(A, B, p){
     <span class="lab">Prima · ${fmt(A.data)}</span><span class="lab r">Dopo · ${fmt(B.data)}</span>
     <span class="lab" style="top:auto;bottom:8px">${POSA_N[p]}</span>
     <input type="range" min="0" max="100" value="50" step="0.5" aria-label="Cursore prima e dopo, ${POSA_N[p]}">
-  </div>
-  <div class="row" style="justify-content:center;gap:6px;margin-top:6px">
+  </div>${pulsantiAl(A,B,p)}</div>`;
+}
+function pulsantiAl(A, B, p){
+  return `<div class="row" style="justify-content:center;gap:6px;margin-top:6px">
     <button class="btn ghost sm" data-al="${A.data}|${p}|${B.data}">⤢ Prima</button>
     <button class="btn ghost sm" data-al="${B.data}|${p}|${A.data}">⤢ Dopo</button>
-  </div></div>`;
+  </div>`;
+}
+/* «Dopo» sopra «Prima» con l'opacità della barra comune */
+function trasparenza(A, B, p){
+  if(!A[p] || !B[p]) return `<div class="ph vuota"><span class="lab">${POSA_N[p]}</span>
+    Manca la foto ${POSA_N[p].toLowerCase()} in una delle due sessioni</div>`;
+  return `<div><div class="ph tra" style="--o:${CMP.op/100}">
+    ${imgF(A, p, "Prima")}<div class="sopra">${imgF(B, p, "Dopo")}</div>
+    <span class="lab">Prima · ${fmt(A.data)}</span><span class="lab r">Dopo · ${fmt(B.data)}</span>
+    <span class="lab" style="top:auto;bottom:8px">${POSA_N[p]}</span>
+  </div>${pulsantiAl(A,B,p)}</div>`;
 }
 
 function renderFoto(){
@@ -1729,6 +1748,15 @@ function renderCmp(ss){
          </div>`
       : `<div class="cmpgrid uno">${ph(A,pose[0],"Prima",1,B.data)}${ph(B,pose[0],"Dopo",1,A.data)}</div>`;
     $("#cmpHint").textContent = "Tocca una foto per ingrandirla. Con «⤢ Allinea» la zoomi e la sposti per farla combaciare con l'altra.";
+  } else if(CMP.modo === "tra"){
+    h = `<div class="row" style="justify-content:center;gap:10px;margin-bottom:10px;font-size:12px;color:var(--dim)">
+        <span>Prima</span>
+        <input type="range" id="cmpOp" min="0" max="100" step="1" value="${CMP.op}"
+          style="max-width:320px;padding:0;accent-color:var(--acc)" aria-label="Trasparenza tra prima e dopo">
+        <span>Dopo</span></div>
+      <div class="cmpgrid ${tutte?"tre":"uno"}"${tutte?"":' style="grid-template-columns:1fr;max-width:520px"'}>${
+      pose.map(p=>trasparenza(A,B,p)).join("")}</div>`;
+    $("#cmpHint").textContent = "Sposta la barra: tutta a sinistra vedi solo «Prima», tutta a destra solo «Dopo», in mezzo le due sovrapposte. Con «⤢» allinei le inquadrature.";
   } else {
     h = `<div class="cmpgrid ${tutte?"tre":"uno"}"${tutte?"":' style="grid-template-columns:1fr;max-width:520px"'}>${
       pose.map(p=>cursore(A,B,p)).join("")}</div>`;
@@ -1920,6 +1948,7 @@ function disegnaRif(){
   if(c){ el.src = urlFoto(r[AL.p]); el.style.cssText = tfStr(alDi(r, AL.p)); }
   else { el.removeAttribute("src"); el.style.cssText = "display:none"; }
   $("#alOpWrap").style.display = c ? "" : "none";
+  $("#alAuto").disabled = !c; $("#alAuto").style.opacity = c ? "" : ".45";
   const o = $("#alOp").value;
   $("#alFrame").style.setProperty("--o", o/100);
   $("#alOv").textContent = o+"%";
@@ -1952,7 +1981,84 @@ function salvaAl(){
   if(LB) disegnaLb();
   toast(zero ? "Inquadratura originale ripristinata" : "Inquadratura salvata");
 }
+/* --- allineamento automatico ---
+   Il riconoscitore della posa (MediaPipe) si carica solo al primo uso e gira nel browser.
+   Da ogni foto si prendono i punti medi di spalle, bacino, ginocchia e caviglie (più il naso):
+   punti centrali del corpo, che non si spostano quando si dimagrisce. Poi si cerca lo zoom
+   e lo spostamento che sovrappongono quei punti a quelli del riferimento (minimi quadrati). */
+const MP = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+const MP_MODELLO = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task";
+const PUNTI_CORPO = [[0,0],[11,12],[23,24],[25,26],[27,28]];
+let POSER = null;
+const PUNTI = new Map();                 // nome file -> punti riconosciuti (o null)
+
+function poser(){
+  if(!POSER) POSER = (async ()=>{
+    const {FilesetResolver, PoseLandmarker} = await import(`${MP}/vision_bundle.mjs`);
+    const vision = await FilesetResolver.forVisionTasks(`${MP}/wasm`);
+    const opz = d => ({baseOptions:{modelAssetPath:MP_MODELLO, delegate:d}, runningMode:"IMAGE", numPoses:1});
+    try{ return await PoseLandmarker.createFromOptions(vision, opz("GPU")); }
+    catch(_){ return await PoseLandmarker.createFromOptions(vision, opz("CPU")); }
+  })().catch(e=>{ POSER = null; throw e; });
+  return POSER;
+}
+async function puntiDi(file){
+  if(PUNTI.has(file)) return PUNTI.get(file);
+  const det = await poser();
+  const img = new Image(); img.src = urlFoto(file); await img.decode();
+  const r = det.detect(img), lm = r.landmarks && r.landmarks[0];
+  const out = lm ? {lm, w:img.naturalWidth, h:img.naturalHeight} : null;
+  PUNTI.set(file, out);
+  return out;
+}
+/* punto normalizzato dell'immagine -> riquadro 3:4 (larghezza 1, origine al centro), come object-fit:contain */
+function nelRiquadro(x, y, w, h){
+  const f = Math.min(1/w, (4/3)/h);
+  return {x:(x-0.5)*w*f, y:(y-0.5)*h*f};
+}
+async function allineaAuto(){
+  const s = sessDi(AL.d), r = sessDi(AL.rif), p = AL.p;
+  if(!r || !r[p]) return toast("Scegli prima una foto di riferimento",1);
+  const btn = $("#alAuto"), testo = btn.textContent, al = AL;
+  btn.disabled = true;
+  btn.textContent = POSER ? "Riconosco la posa…" : "Scarico il riconoscitore…";
+  try{
+    const A = await puntiDi(s[p]);
+    btn.textContent = "Riconosco la posa…";
+    const B = await puntiDi(r[p]);
+    if(AL !== al) return;                                   // editor chiuso nel frattempo
+    if(!A || !B) throw new Error(`non trovo la persona nella foto ${!A ? "da allineare" : "di riferimento"}`);
+
+    const ar = alDi(r, p) || {z:1, x:0, y:0}, a = [], b = [];
+    PUNTI_CORPO.forEach(([i,j])=>{
+      const vis = L => ((L.lm[i].visibility||0) + (L.lm[j].visibility||0))/2;
+      if(vis(A) < 0.5 || vis(B) < 0.5) return;
+      const mid = L => nelRiquadro((L.lm[i].x+L.lm[j].x)/2, (L.lm[i].y+L.lm[j].y)/2, L.w, L.h);
+      const pa = mid(A), pb = mid(B);
+      a.push(pa);
+      b.push({x: ar.x + ar.z*pb.x, y: ar.y*4/3 + ar.z*pb.y});   // dove sta quel punto nel riferimento già inquadrato
+    });
+    if(a.length < 2) throw new Error("troppo pochi punti del corpo visibili in entrambe le foto");
+
+    const media = v => ({x:v.reduce((t,q)=>t+q.x,0)/v.length, y:v.reduce((t,q)=>t+q.y,0)/v.length});
+    const ma = media(a), mb = media(b);
+    let num = 0, den = 0;
+    a.forEach((q,k)=>{ const dx=q.x-ma.x, dy=q.y-ma.y; num += dx*(b[k].x-mb.x) + dy*(b[k].y-mb.y); den += dx*dx + dy*dy; });
+    if(den < 1e-6) throw new Error("i punti trovati sono troppo vicini tra loro");
+    const z = clamp(num/den, 0.5, 4);
+    AL.z = z; AL.x = mb.x - z*ma.x; AL.y = (mb.y - z*ma.y)/(4/3);
+    disegnaAl();
+    toast(`Allineata su ${a.length} punti del corpo: controlla e salva`);
+  }catch(e){
+    toast("Allineamento automatico non riuscito: " + (e && e.message || "riconoscitore non disponibile, serve Internet"), 1);
+  }finally{
+    btn.textContent = testo;
+    if(AL === al) disegnaRif();
+  }
+}
+
 function initAllinea(){
+  $("#alAuto").onclick = allineaAuto;
   const fr = $("#alFrame");
   const centro = (e)=>{ const r=fr.getBoundingClientRect(); return [e.clientX-(r.left+r.width/2), e.clientY-(r.top+r.height/2)]; };
   fr.addEventListener("wheel", e=>{
@@ -2021,7 +2127,13 @@ function initFoto(){
   $("#cmpB").onchange = e=>{ CMP.b = e.target.value; renderFoto(); };
   $("#cmpPosa").onclick = e=>{ const b=e.target.closest("button"); if(b){ CMP.posa=b.dataset.p; renderFoto(); } };
   $("#cmpModo").onclick = e=>{ const b=e.target.closest("button"); if(b){ CMP.modo=b.dataset.m; renderFoto(); } };
-  $("#cmpView").oninput = e=>{ const c=e.target.closest(".cur"); if(c) c.style.setProperty("--p", e.target.value+"%"); };
+  $("#cmpView").oninput = e=>{
+    if(e.target.id === "cmpOp"){
+      CMP.op = +e.target.value;
+      return $$("#cmpView .tra").forEach(t=>t.style.setProperty("--o", CMP.op/100));
+    }
+    const c = e.target.closest(".cur"); if(c) c.style.setProperty("--p", e.target.value+"%");
+  };
   $("#cmpView").onclick = e=>{
     const a = e.target.closest("[data-al]");
     if(a) return apriAllinea(...a.dataset.al.split("|"));
