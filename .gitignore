@@ -2,6 +2,7 @@
 dati.json
 dati.json.tmp
 backup/
+foto/
 *.xlsx
 *.xls
 

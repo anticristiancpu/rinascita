@@ -227,6 +227,62 @@
   .lrow .lw{margin-left:auto;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}
   .lrow .lt{display:flex;gap:5px;flex:none;width:150px;justify-content:flex-end}
   @media(max-width:560px){ .lrow .lt{width:auto} .lrow .lt .tag:first-child{display:none} }
+
+  /* ---------- foto ---------- */
+  .ph{position:relative;aspect-ratio:3/4;background:#070a0e;border:1px solid var(--line);border-radius:12px;
+    overflow:hidden;display:block;width:100%}
+  .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+  .ph.vuota{display:grid;place-items:center;color:var(--dim2);font-size:13px;text-align:center;padding:10px}
+  .ph .lab{position:absolute;left:8px;top:8px;z-index:3;font-size:11px;font-weight:700;padding:3px 9px;
+    border-radius:99px;background:rgba(11,15,20,.78);border:1px solid var(--line);color:var(--txt);
+    pointer-events:none;white-space:nowrap}
+  .ph .lab.r{left:auto;right:8px}
+  .ph.click{cursor:zoom-in}
+  .ph.click:hover{border-color:var(--dim2)}
+  .cmpctl{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-bottom:6px}
+  .cmpctl .field{margin:0}
+  @media(max-width:700px){.cmpctl{grid-template-columns:1fr 1fr}.cmpctl .sel{grid-column:1/-1}}
+  .cmpinfo{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+  .cmpgrid{display:grid;gap:10px;margin:0 auto}
+  .cmpgrid.uno{grid-template-columns:1fr 1fr;max-width:760px}
+  .cmpgrid.tre{grid-template-columns:repeat(3,1fr);max-width:900px}
+  .cmprow{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--dim2);font-weight:700;
+    grid-column:1/-1;margin-top:4px}
+  .cur{--p:50%;user-select:none;touch-action:pan-y}
+  .cur img.sopra{clip-path:inset(0 calc(100% - var(--p)) 0 0)}
+  .cur .linea{position:absolute;top:0;bottom:0;left:var(--p);width:2px;margin-left:-1px;background:var(--acc);
+    z-index:2;pointer-events:none;box-shadow:0 0 10px rgba(61,220,151,.6)}
+  .cur .linea::after{content:"⟷";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:30px;height:30px;border-radius:99px;background:var(--acc);color:#06231a;display:grid;place-items:center;
+    font-size:15px;font-weight:800}
+  .cur input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;padding:0;z-index:4;cursor:ew-resize}
+  .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+  .slot .ph{cursor:pointer;border-style:dashed}
+  .slot .ph:hover{border-color:var(--acc2)}
+  .slot .ph.ha{border-style:solid}
+  .slot .azz{position:absolute;right:6px;top:6px;z-index:3;width:26px;height:26px;border-radius:99px;border:1px solid var(--line);
+    background:rgba(11,15,20,.85);color:var(--dim);cursor:pointer;font-size:14px;line-height:1}
+  .slot .azz:hover{color:var(--bad)}
+  .sess{border:1px solid var(--line);border-radius:12px;background:#0e151f;padding:12px;margin-bottom:10px}
+  .sess .top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .sess .thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .tline{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .tline .cap{font-size:12px;color:var(--dim);margin-top:5px;text-align:center;font-variant-numeric:tabular-nums}
+  .lb{position:fixed;inset:0;z-index:90;background:rgba(5,8,12,.94);display:none;flex-direction:column;
+    align-items:center;justify-content:center;padding:16px;gap:12px}
+  .lb.on{display:flex}
+  .lb img{max-width:100%;max-height:calc(100vh - 150px);object-fit:contain;border-radius:10px}
+  .lb .bar2{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
+  .lb .nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:99px;
+    border:1px solid var(--line);background:rgba(20,28,40,.9);color:var(--txt);font-size:22px;cursor:pointer}
+  .lb .nav:disabled{opacity:.25;cursor:default}
+  .lb .nav.p{left:14px} .lb .nav.n{right:14px}
+  .lb .x{position:absolute;top:12px;right:14px}
+  .fdel{color:var(--dim2);cursor:pointer;background:none;border:0;font-size:20px;padding:0 6px;line-height:1}
+  .fdel:hover{color:var(--bad)}
+  @media(max-width:560px){ .lb .nav{top:auto;bottom:16px;transform:none} .lb img{max-height:calc(100vh - 210px)}
+    .cmpgrid.uno .ph:not(.cur) .lab.r{top:auto;bottom:8px;right:auto;left:8px}
+    .cmpgrid{gap:6px} }
 </style>
 </head>
 <body>
@@ -266,6 +322,7 @@
   <button data-t="dash" class="on">Dashboard</button>
   <button data-t="reg">Registro</button>
   <button data-t="cal">Calendario</button>
+  <button data-t="foto">Foto</button>
   <button data-t="mile">Milestone</button>
   <button data-t="set">Impostazioni</button>
 </div></nav>
@@ -382,6 +439,66 @@
     </div>
   </section>
 
+  <!-- ============ FOTO ============ -->
+  <section id="foto">
+    <div class="card" id="fotoNoSrv" style="display:none">
+      <div class="empty">Le foto vengono salvate come file sul server, accanto a <b style="color:var(--txt)">dati.json</b>.<br>
+        Apri l'app con <b style="color:var(--txt)">Avvia.bat</b> (o dal server) per usare questa sezione.</div>
+    </div>
+
+    <div id="fotoOk">
+      <div class="card" style="margin-bottom:12px">
+        <div class="row" style="justify-content:space-between;margin-bottom:12px">
+          <h2 style="margin:0">Confronto</h2>
+          <div class="sel" id="cmpModo">
+            <button data-m="aff" class="on">Affiancate</button>
+            <button data-m="cur">Cursore</button>
+          </div>
+        </div>
+        <div id="cmpVuoto" class="empty">Aggiungi almeno due sessioni di foto per confrontarle.</div>
+        <div id="cmpPieno">
+          <div class="cmpctl">
+            <div class="field"><label>Prima</label><select id="cmpA"></select></div>
+            <div class="field"><label>Dopo</label><select id="cmpB"></select></div>
+            <div class="sel" id="cmpPosa" style="padding-bottom:6px"></div>
+          </div>
+          <div class="cmpinfo" id="cmpInfo"></div>
+          <div id="cmpView"></div>
+          <div class="hint" id="cmpHint" style="text-align:center"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="justify-content:space-between;margin-bottom:12px">
+          <h2 style="margin:0">Sessioni <span class="r" id="nFoto"></span></h2>
+          <button class="btn sm" id="btnNuoveFoto">＋ Nuove foto</button>
+        </div>
+
+        <div id="fotoForm" style="display:none">
+          <div class="box" style="margin:0 0 14px">
+            <div class="grid g4">
+              <div class="field"><label>Data</label><input type="date" id="ffData"></div>
+              <div class="field" style="grid-column:span 3"><label>Note</label>
+                <input type="text" id="ffNote" placeholder="opzionale — luce, ora, condizioni…"></div>
+            </div>
+            <div class="slots" id="ffSlots"></div>
+            <input type="file" id="ffFile" accept="image/*" style="display:none">
+            <div class="row">
+              <button class="btn" id="ffSalva">Salva foto</button>
+              <button class="btn ghost sm" id="ffAnnulla">Annulla</button>
+            </div>
+            <div class="hint">Tocca un riquadro per scegliere la foto. Le immagini vengono ridimensionate e
+              ripulite dai dati EXIF (posizione GPS compresa) prima di essere salvate.
+              Per confronti fedeli: stessa luce, stessa distanza, stessa posa.</div>
+          </div>
+        </div>
+
+        <div class="sel" id="galPosa" style="margin-bottom:12px"></div>
+        <div id="galleria"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ MILESTONE ============ -->
   <section id="mile">
     <div class="card" style="margin-bottom:12px">
@@ -439,6 +556,18 @@
     </div>
   </section>
 
+</div>
+
+<div class="lb" id="lb">
+  <button class="btn ghost sm x" id="lbX">✕ Chiudi</button>
+  <button class="nav p" id="lbP" title="Precedente (←)">‹</button>
+  <button class="nav n" id="lbN" title="Successiva (→)">›</button>
+  <img id="lbImg" alt="">
+  <div class="bar2" id="lbInfo"></div>
+  <div class="bar2">
+    <button class="btn ghost sm" id="lbA">Usa come «Prima»</button>
+    <button class="btn ghost sm" id="lbB">Usa come «Dopo»</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -523,12 +652,12 @@ const metaOf = k => MET.find(m=>m.k===k);
 /* ================= stato e persistenza ================= */
 const KEY = "rinascita.v1";
 let S = loadLocal();
-let MODE = "local", saveTimer = null, saving = false, dirty = false, filePath = "";
+let MODE = "local", saveTimer = null, saving = false, dirty = false, filePath = "", FOTO_OK = false;
 let RANGE = "prog", RANGEC = "all", METS = ["bf","muscolo"], IMP = null, apriForm = ()=>{};
 
 function base(){
   return {altezza:SEED.altezza, pesoObiettivo:SEED.pesoObiettivo,
-          inizio:SEED.inizio, fine:SEED.fine, mis:[], giorni:{}};
+          inizio:SEED.inizio, fine:SEED.fine, mis:[], giorni:{}, foto:[]};
 }
 function loadLocal(){
   try{
@@ -566,14 +695,15 @@ async function boot(){
   try{
     const pj = await (await fetch("/api/ping",{cache:"no-store"})).json();
     if(pj.ok){
-      MODE="file"; filePath = pj.file||"dati.json";
+      MODE="file"; filePath = pj.file||"dati.json"; FOTO_OK = !!pj.foto;
       const j = await (await fetch("/api/dati",{cache:"no-store"})).json();
       if(j.ok && j.esiste && j.dati && Array.isArray(j.dati.mis)) S = Object.assign(base(), j.dati);
       else await push();
     }
   }catch(e){ MODE="local"; }
   if(!S.giorni) S.giorni = {};
-  initForm(); initSel(); initCal(); render(); stato();
+  if(!Array.isArray(S.foto)) S.foto = [];
+  initForm(); initSel(); initCal(); initFoto(); render(); stato();
 }
 window.addEventListener("beforeunload", e=>{ if(MODE==="file"&&(dirty||saving)){ e.preventDefault(); e.returnValue=""; }});
 
@@ -679,7 +809,7 @@ function render(){
   renderStats(s); renderUltima(tutte);
   chartWeight(); chartComp();
   renderTable(tutte); renderLast(tutte);
-  renderMiles(); renderStreaks(); renderCal();
+  renderMiles(); renderStreaks(); renderCal(); renderFoto();
 
   const fonte = PIfonte();
   $("#sPiVal").innerHTML = fonte
@@ -1412,6 +1542,361 @@ function initCal(){
   };
 }
 
+/* ================= foto ================= */
+/* Una sessione = una data con fino a tre pose. In dati.json resta solo il nome
+   dei file; le immagini stanno in foto/ accanto ai dati, servite da /api/foto/. */
+const POSE   = ["frontale","laterale","retro"];
+const POSA_N = {frontale:"Frontale", laterale:"Laterale", retro:"Retro"};
+const LATO   = 1600;                         // lato lungo massimo dopo il ridimensionamento
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,
+  c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const urlFoto = f => "/api/foto/"+encodeURIComponent(f);
+
+let CMP = {a:null, b:null, posa:"frontale", modo:"aff"};
+let GAL = "sess";
+let FF  = null;     // form aperto: {orig, slot:{posa:{file|blob,url}}, daEliminare:Set, posa}
+let LB  = null;     // lightbox aperto: {p, lista, i}
+
+function sessioni(){ return [...S.foto].sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:0); }
+const sessDi = d => S.foto.find(s=>s.data===d);
+
+/* la pesata più vicina alla data delle foto, entro 3 giorni */
+function pesoVicino(d){
+  let best=null, bd=4;
+  S.mis.forEach(m=>{ const g=Math.abs(days(m.data,d)); if(g<bd){ bd=g; best=m; } });
+  return best;
+}
+
+/* Ridimensiona e ricodifica in JPEG: file più leggeri e niente EXIF (GPS compreso).
+   L'orientamento della fotocamera viene applicato prima di disegnare. */
+async function riduci(file){
+  let src, chiudi = ()=>{};
+  try{
+    src = await createImageBitmap(file, {imageOrientation:"from-image"});
+    chiudi = ()=> src.close && src.close();
+  }catch(_){
+    const u = URL.createObjectURL(file);
+    src = await new Promise((ok,ko)=>{ const i=new Image(); i.onload=()=>ok(i);
+      i.onerror=()=>ko(new Error("Formato non supportato: usa una foto JPG o PNG")); i.src=u; });
+    chiudi = ()=> URL.revokeObjectURL(u);
+  }
+  const w = src.naturalWidth||src.width, h = src.naturalHeight||src.height;
+  const k = Math.min(1, LATO/Math.max(w,h));
+  const c = document.createElement("canvas");
+  c.width = Math.round(w*k); c.height = Math.round(h*k);
+  c.getContext("2d").drawImage(src, 0, 0, c.width, c.height);
+  chiudi();
+  return new Promise((ok,ko)=> c.toBlob(b=> b ? ok(b) : ko(new Error("Conversione non riuscita")), "image/jpeg", 0.86));
+}
+
+async function caricaFile(blob, data, posa){
+  const r = await fetch(`/api/foto?data=${data}&posa=${posa}`,
+    {method:"POST", headers:{"Content-Type":"image/jpeg"}, body:blob});
+  const j = await r.json().catch(()=>({ok:false, errore:"risposta non valida dal server"}));
+  if(!j.ok) throw new Error(j.errore||"caricamento non riuscito");
+  return j.file;
+}
+function eliminaFile(f){ return fetch(urlFoto(f), {method:"DELETE"}).catch(()=>{}); }
+
+/* --- riquadro foto: usato da confronto, sessioni e sequenza --- */
+function ph(s, p, lab, info){
+  const f = s && s[p];
+  if(!f) return `<div class="ph vuota"><span class="lab">${lab}</span>Nessuna foto ${POSA_N[p].toLowerCase()}</div>`;
+  const m = info && pesoVicino(s.data);
+  return `<div class="ph click" data-lb="${s.data}|${p}"><span class="lab">${lab}</span>${
+    info ? `<span class="lab r">${fmt(s.data)}${m?` · ${num(m.peso)} kg`:""}</span>` : ""}
+    <img src="${urlFoto(f)}" alt="${POSA_N[p]} del ${fmtL(s.data)}" loading="lazy"></div>`;
+}
+function cursore(A, B, p){
+  if(!A[p] || !B[p]) return `<div class="ph vuota"><span class="lab">${POSA_N[p]}</span>
+    Manca la foto ${POSA_N[p].toLowerCase()} in una delle due sessioni</div>`;
+  return `<div class="ph cur">
+    <img src="${urlFoto(B[p])}" alt="Dopo"><img class="sopra" src="${urlFoto(A[p])}" alt="Prima">
+    <div class="linea"></div>
+    <span class="lab">Prima · ${fmt(A.data)}</span><span class="lab r">Dopo · ${fmt(B.data)}</span>
+    <span class="lab" style="top:auto;bottom:8px">${POSA_N[p]}</span>
+    <input type="range" min="0" max="100" value="50" step="0.5" aria-label="Cursore prima e dopo, ${POSA_N[p]}">
+  </div>`;
+}
+
+function renderFoto(){
+  $("#fotoNoSrv").style.display = FOTO_OK ? "none" : "block";
+  $("#fotoOk").style.display    = FOTO_OK ? "" : "none";
+  if(!FOTO_OK) return;
+  const ss = sessioni(), date = ss.map(s=>s.data);
+  $("#nFoto").textContent = ss.length ? `${ss.length} session${ss.length===1?"e":"i"}` : "";
+  if(!date.includes(CMP.a)) CMP.a = date[0] || null;
+  if(!date.includes(CMP.b)) CMP.b = date[date.length-1] || null;
+  renderCmp(ss); renderGal(ss);
+}
+
+function renderCmp(ss){
+  const due = ss.length >= 2;
+  $("#cmpVuoto").style.display = due ? "none" : "block";
+  $("#cmpPieno").style.display = due ? "" : "none";
+  $$("#cmpModo button").forEach(b=>b.classList.toggle("on", b.dataset.m===CMP.modo));
+  if(!due) return;
+
+  const opt = sel => ss.map(s=>{ const m=pesoVicino(s.data);
+    return `<option value="${s.data}"${s.data===sel?" selected":""}>${fmtL(s.data)}${m?` · ${num(m.peso)} kg`:""}</option>`;
+  }).join("");
+  $("#cmpA").innerHTML = opt(CMP.a);
+  $("#cmpB").innerHTML = opt(CMP.b);
+  $("#cmpPosa").innerHTML = POSE.concat(["tutte"]).map(p=>
+    `<button data-p="${p}" class="${CMP.posa===p?"on":""}">${p==="tutte"?"Tutte e tre":POSA_N[p]}</button>`).join("");
+
+  const A = sessDi(CMP.a), B = sessDi(CMP.b);
+  const g = days(A.data, B.data), ma = pesoVicino(A.data), mb = pesoVicino(B.data);
+  const info = [`<span class="tag">${Math.abs(g)} giorn${Math.abs(g)===1?"o":"i"} di distanza</span>`];
+  if(g < 0) info.push(`<span class="tag warn">«Dopo» è più vecchia di «Prima»</span>`);
+  if(ma && mb){
+    info.push(`<span class="tag">Peso ${num(ma.peso)} → ${num(mb.peso)} kg</span>${delta(mb.peso-ma.peso)}`);
+    if(ma.bf!=null && mb.bf!=null)
+      info.push(`<span class="tag">Grasso ${num(ma.bf)} → ${num(mb.bf)} %</span>${delta(mb.bf-ma.bf)}`);
+    if(ma.muscolo!=null && mb.muscolo!=null)
+      info.push(`<span class="tag">Muscoli ${num(ma.muscolo)} → ${num(mb.muscolo)} kg</span>${delta(mb.muscolo-ma.muscolo,1)}`);
+  } else info.push(`<span class="tag" style="opacity:.7">nessuna pesata entro 3 giorni da entrambe le date</span>`);
+  $("#cmpInfo").innerHTML = info.join("");
+
+  const tutte = CMP.posa === "tutte", pose = tutte ? POSE : [CMP.posa];
+  let h;
+  if(CMP.modo === "aff"){
+    h = tutte
+      ? `<div class="cmpgrid tre">
+           <div class="cmprow">Prima · ${fmtL(A.data)}</div>${POSE.map(p=>ph(A,p,POSA_N[p])).join("")}
+           <div class="cmprow">Dopo · ${fmtL(B.data)}</div>${POSE.map(p=>ph(B,p,POSA_N[p])).join("")}
+         </div>`
+      : `<div class="cmpgrid uno">${ph(A,pose[0],"Prima",1)}${ph(B,pose[0],"Dopo",1)}</div>`;
+    $("#cmpHint").textContent = "Tocca una foto per ingrandirla e scorrere tutte le sessioni di quella posa.";
+  } else {
+    h = `<div class="cmpgrid ${tutte?"tre":"uno"}"${tutte?"":' style="grid-template-columns:1fr;max-width:520px"'}>${
+      pose.map(p=>cursore(A,B,p)).join("")}</div>`;
+    $("#cmpHint").textContent = "Trascina il cursore: a sinistra la foto «Prima», a destra la «Dopo».";
+  }
+  $("#cmpView").innerHTML = h;
+}
+
+function renderGal(ss){
+  $("#galPosa").innerHTML = [["sess","Per sessione"]].concat(POSE.map(p=>[p,"Sequenza "+POSA_N[p].toLowerCase()]))
+    .map(([k,n])=>`<button data-g="${k}" class="${GAL===k?"on":""}">${n}</button>`).join("");
+  const el = $("#galleria");
+  if(!ss.length){
+    el.innerHTML = `<div class="empty">Nessuna foto ancora. Usa <b>＋ Nuove foto</b> per la prima sessione:
+      frontale, laterale e retro.</div>`;
+    return;
+  }
+  const inizio = ss[0].data;
+  if(GAL === "sess"){
+    el.innerHTML = [...ss].reverse().map(s=>{
+      const m = pesoVicino(s.data), g = days(inizio, s.data);
+      return `<div class="sess">
+        <div class="top">
+          <div><b>${fmtL(s.data)}</b>
+            <span style="color:var(--dim2);font-size:12px;margin-left:6px">${
+              g ? `giorno ${g} dalla prima foto` : "prima sessione"}${m?` · ${num(m.peso)} kg`:""}</span>
+            ${s.note?`<div class="hint" style="margin-top:2px">${esc(s.note)}</div>`:""}</div>
+          <div class="row" style="gap:6px">
+            <button class="btn ghost sm" data-a="${s.data}" title="Confronta come «Prima»"${CMP.a===s.data?' style="color:var(--acc);border-color:var(--acc2)"':""}>Prima</button>
+            <button class="btn ghost sm" data-b="${s.data}" title="Confronta come «Dopo»"${CMP.b===s.data?' style="color:var(--acc);border-color:var(--acc2)"':""}>Dopo</button>
+            <button class="btn ghost sm" data-e="${s.data}">Modifica</button>
+            <button class="fdel" data-x="${s.data}" title="Elimina sessione">×</button>
+          </div>
+        </div>
+        <div class="thumbs">${POSE.map(p=>ph(s,p,POSA_N[p])).join("")}</div>
+      </div>`;
+    }).join("");
+  } else {
+    const con = ss.filter(s=>s[GAL]);
+    el.innerHTML = con.length
+      ? `<div class="tline">${con.map(s=>{ const m=pesoVicino(s.data);
+          return `<div>${ph(s,GAL,fmt(s.data))}<div class="cap">${fmtL(s.data)}${m?` · ${num(m.peso)} kg`:""}</div></div>`;
+        }).join("")}</div>
+        <div class="hint">Dalla più vecchia alla più recente. Tocca una foto e usa ← → per sfogliarle a tutto schermo.</div>`
+      : `<div class="empty">Nessuna foto ${POSA_N[GAL].toLowerCase()} salvata.</div>`;
+  }
+}
+
+/* --- form nuove foto / modifica --- */
+function liberaSlot(){ if(FF) POSE.forEach(p=>FF.slot[p].url && URL.revokeObjectURL(FF.slot[p].url)); }
+function apriFotoForm(d){
+  liberaSlot();
+  const s = d ? sessDi(d) : null;
+  FF = {orig: s ? s.data : null, slot:{}, daEliminare:new Set(), posa:null};
+  POSE.forEach(p=> FF.slot[p] = s && s[p] ? {file:s[p]} : {});
+  $("#ffData").value = s ? s.data : today();
+  $("#ffNote").value = s ? (s.note||"") : "";
+  $("#fotoForm").style.display = "block";
+  $("#btnNuoveFoto").textContent = "Chiudi"; $("#btnNuoveFoto").className = "btn sm ghost";
+  $("#ffSalva").textContent = s ? "Salva modifiche" : "Salva foto";
+  renderSlots();
+  $("#fotoForm").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+function chiudiFotoForm(){
+  liberaSlot(); FF = null;
+  $("#fotoForm").style.display = "none";
+  $("#btnNuoveFoto").textContent = "＋ Nuove foto"; $("#btnNuoveFoto").className = "btn sm";
+}
+function renderSlots(){
+  $("#ffSlots").innerHTML = POSE.map(p=>{
+    const x = FF.slot[p], src = x.url || (x.file ? urlFoto(x.file) : "");
+    return `<div class="slot"><div class="ph${src?" ha":" vuota"}" data-p="${p}" title="Scegli la foto ${POSA_N[p].toLowerCase()}">
+      <span class="lab">${POSA_N[p]}</span>${src
+        ? `<img src="${src}" alt="">${x.blob?'<span class="lab" style="top:auto;bottom:8px;color:var(--acc)">nuova</span>':""}
+           <button class="azz" data-z="${p}" title="Togli questa foto">×</button>`
+        : `<span>＋<br>Scegli foto</span>`}
+    </div></div>`;
+  }).join("");
+}
+async function metti(p, f){
+  if(!FF) return;
+  if(!/^image\//.test(f.type) && !/\.(jpe?g|png|webp|heic|heif)$/i.test(f.name))
+    return toast("Questo file non è un'immagine",1);
+  toast("Preparo la foto…");
+  try{
+    const blob = await riduci(f);
+    if(!FF) return;
+    const old = FF.slot[p];
+    if(old.url) URL.revokeObjectURL(old.url);
+    if(old.file) FF.daEliminare.add(old.file);
+    FF.slot[p] = {blob, url:URL.createObjectURL(blob)};
+    renderSlots(); toast(`${POSA_N[p]} pronta`);
+  }catch(e){ toast(e.message||"Immagine non leggibile",1); }
+}
+async function salvaFotoForm(){
+  const data = $("#ffData").value;
+  if(!data) return toast("Inserisci la data",1);
+  if(!POSE.some(p=>FF.slot[p].file||FF.slot[p].blob)) return toast("Aggiungi almeno una foto",1);
+  const altra = sessDi(data), unisci = altra && altra.data!==FF.orig ? altra : null;
+  if(unisci && !confirm(`Esiste già una sessione del ${fmtL(data)}. Unire queste foto a quella?\n`+
+                        `Le pose che hai scelto sostituiscono quelle già presenti.`)) return;
+
+  const btn = $("#ffSalva"), testo = btn.textContent, nuovi = {};
+  btn.disabled = true; btn.textContent = "Caricamento…";
+  try{
+    for(const p of POSE){ const x=FF.slot[p]; if(x.blob) nuovi[p] = await caricaFile(x.blob, data, p); }
+    const rec = {data, note:$("#ffNote").value.trim()};
+    const del = new Set(FF.daEliminare);
+    POSE.forEach(p=>{
+      rec[p] = nuovi[p] || FF.slot[p].file || null;
+      if(unisci && unisci[p]){ if(!rec[p]) rec[p] = unisci[p]; else del.add(unisci[p]); }
+    });
+    if(unisci && !rec.note) rec.note = unisci.note || "";
+    POSE.forEach(p=> rec[p] && del.delete(rec[p]));
+    const nuova = !FF.orig && !unisci;
+    S.foto = S.foto.filter(s=> s.data!==data && s.data!==FF.orig);
+    S.foto.push(rec);
+    del.forEach(eliminaFile);
+    if(nuova && !S.foto.some(s=>s.data>data)) CMP.b = data;    // l'ultima sessione diventa il «Dopo»
+    save(); chiudiFotoForm(); renderFoto();
+    toast(nuova ? "Sessione salvata" : "Foto aggiornate");
+  }catch(e){
+    Object.values(nuovi).forEach(eliminaFile);
+    toast("Foto non salvate: "+e.message,1);
+  }finally{ btn.disabled = false; btn.textContent = testo; }
+}
+function eliminaSessione(d){
+  const s = sessDi(d); if(!s) return;
+  if(!confirm(`Eliminare le foto del ${fmtL(d)}? I file vengono cancellati dal server.`)) return;
+  POSE.forEach(p=> s[p] && eliminaFile(s[p]));
+  S.foto = S.foto.filter(x=>x.data!==d);
+  if(FF && FF.orig===d) chiudiFotoForm();
+  save(); renderFoto(); toast("Sessione eliminata");
+}
+
+/* --- lightbox: una posa alla volta, avanti e indietro nel tempo --- */
+function apriLb(d, p){
+  const lista = sessioni().filter(s=>s[p]), i = lista.findIndex(s=>s.data===d);
+  if(i < 0) return;
+  LB = {p, lista, i};
+  $("#lb").classList.add("on"); document.body.style.overflow = "hidden";
+  disegnaLb();
+}
+function disegnaLb(){
+  const s = LB.lista[LB.i], m = pesoVicino(s.data), p0 = LB.lista[0];
+  const m0 = pesoVicino(p0.data);
+  $("#lbImg").src = urlFoto(s[LB.p]);
+  $("#lbImg").alt = `${POSA_N[LB.p]} del ${fmtL(s.data)}`;
+  $("#lbInfo").innerHTML = `<span class="tag now">${POSA_N[LB.p]}</span>
+    <span class="tag">${fmtL(s.data)}</span>
+    ${m?`<span class="tag">${num(m.peso)} kg</span>`:""}
+    ${LB.i && m && m0 ? `${delta(m.peso-m0.peso)}<span style="color:var(--dim2);font-size:12px">dalla prima foto</span>`:""}
+    <span class="tag">${LB.i+1} / ${LB.lista.length}</span>
+    ${s.note?`<span style="color:var(--dim);font-size:13px">${esc(s.note)}</span>`:""}`;
+  $("#lbP").disabled = LB.i === 0;
+  $("#lbN").disabled = LB.i === LB.lista.length-1;
+  [LB.i-1, LB.i+1].forEach(j=>{ const x=LB.lista[j]; if(x) new Image().src = urlFoto(x[LB.p]); });
+}
+function chiudiLb(){ LB = null; $("#lb").classList.remove("on"); document.body.style.overflow = ""; $("#lbImg").removeAttribute("src"); }
+function muoviLb(n){ if(!LB) return; const j = LB.i+n; if(j<0 || j>=LB.lista.length) return; LB.i = j; disegnaLb(); }
+
+function initFoto(){
+  $("#btnNuoveFoto").onclick = ()=> FF ? chiudiFotoForm() : apriFotoForm(null);
+  $("#ffAnnulla").onclick = chiudiFotoForm;
+  $("#ffSalva").onclick = salvaFotoForm;
+  $("#ffSlots").onclick = e=>{
+    const z = e.target.closest(".azz");
+    if(z){
+      const p = z.dataset.z, x = FF.slot[p];
+      if(x.url) URL.revokeObjectURL(x.url);
+      if(x.file) FF.daEliminare.add(x.file);
+      FF.slot[p] = {}; renderSlots(); return;
+    }
+    const c = e.target.closest(".ph[data-p]");
+    if(c){ FF.posa = c.dataset.p; $("#ffFile").click(); }
+  };
+  $("#ffSlots").ondragover = e=>{ if(e.target.closest(".ph[data-p]")) e.preventDefault(); };
+  $("#ffSlots").ondrop = e=>{
+    const c = e.target.closest(".ph[data-p]"), f = e.dataTransfer.files[0];
+    if(!c || !f) return;
+    e.preventDefault(); metti(c.dataset.p, f);
+  };
+  $("#ffFile").onchange = e=>{
+    const f = e.target.files[0]; e.target.value = "";
+    if(f && FF && FF.posa) metti(FF.posa, f);
+  };
+
+  $("#cmpA").onchange = e=>{ CMP.a = e.target.value; renderFoto(); };
+  $("#cmpB").onchange = e=>{ CMP.b = e.target.value; renderFoto(); };
+  $("#cmpPosa").onclick = e=>{ const b=e.target.closest("button"); if(b){ CMP.posa=b.dataset.p; renderFoto(); } };
+  $("#cmpModo").onclick = e=>{ const b=e.target.closest("button"); if(b){ CMP.modo=b.dataset.m; renderFoto(); } };
+  $("#cmpView").oninput = e=>{ const c=e.target.closest(".cur"); if(c) c.style.setProperty("--p", e.target.value+"%"); };
+  $("#cmpView").onclick = e=>{ const x=e.target.closest("[data-lb]"); if(x) apriLb(...x.dataset.lb.split("|")); };
+
+  $("#galPosa").onclick = e=>{ const b=e.target.closest("button"); if(b){ GAL=b.dataset.g; renderFoto(); } };
+  $("#galleria").onclick = e=>{
+    const x = e.target.closest("button,[data-lb]");
+    if(!x) return;
+    const d = x.dataset;
+    if(d.lb) return apriLb(...d.lb.split("|"));
+    if(d.a || d.b){
+      if(d.a) CMP.a = d.a; else CMP.b = d.b;
+      renderFoto(); toast(`Il ${fmtL(d.a||d.b)} è ora «${d.a?"Prima":"Dopo"}» nel confronto`);
+      $("#foto").scrollIntoView({behavior:"smooth"});
+    }
+    if(d.e) apriFotoForm(d.e);
+    if(d.x) eliminaSessione(d.x);
+  };
+
+  $("#lbX").onclick = chiudiLb;
+  $("#lbP").onclick = ()=> muoviLb(-1);
+  $("#lbN").onclick = ()=> muoviLb(1);
+  $("#lb").onclick = e=>{ if(e.target.id==="lb") chiudiLb(); };
+  $("#lbA").onclick = ()=>{ CMP.a = LB.lista[LB.i].data; chiudiLb(); renderFoto(); toast("Impostata come «Prima»"); };
+  $("#lbB").onclick = ()=>{ CMP.b = LB.lista[LB.i].data; chiudiLb(); renderFoto(); toast("Impostata come «Dopo»"); };
+  document.addEventListener("keydown", e=>{
+    if(!LB) return;
+    if(e.key==="Escape") chiudiLb();
+    else if(e.key==="ArrowLeft")  muoviLb(-1);
+    else if(e.key==="ArrowRight") muoviLb(1);
+  });
+  let x0 = null;                                   // swipe sul telefono
+  $("#lbImg").addEventListener("touchstart", e=>{ x0 = e.touches[0].clientX; }, {passive:true});
+  $("#lbImg").addEventListener("touchend", e=>{
+    if(x0==null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if(Math.abs(dx) > 50) muoviLb(dx<0 ? 1 : -1);
+  });
+}
+
 /* ================= eventi ================= */
 $$("nav button").forEach(b=>b.onclick=()=>{
   $$("nav button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
@@ -1467,12 +1952,14 @@ $("#fileImp").onchange = e=>{
   r.onload = ()=>{ try{
       const o=JSON.parse(r.result);
       if(!Array.isArray(o.mis)) throw 0;
-      S=Object.assign(base(),o); save(); render(); toast("Dati importati");
+      S=Object.assign(base(),o); if(!Array.isArray(S.foto)) S.foto=[];
+      save(); render(); toast("Dati importati");
     }catch(_){ toast("File non valido",1); } };
   r.readAsText(f);
 };
 $("#btnReset").onclick = ()=>{
-  if(confirm("Cancellare tutte le rilevazioni e i parametri? L'operazione non è reversibile.")){
+  if(confirm("Cancellare tutte le rilevazioni, i parametri e le foto? L'operazione non è reversibile.")){
+    if(FOTO_OK) S.foto.forEach(s=>POSE.forEach(p=>s[p]&&eliminaFile(s[p])));
     localStorage.removeItem(KEY); S=base(); save(); render(); toast("Dati cancellati");
   }
 };

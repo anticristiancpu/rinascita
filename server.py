@@ -18,6 +18,8 @@ Configurazione tramite variabili d'ambiente:
 
 import json
 import os
+import re
+import secrets
 import shutil
 import sys
 import threading
@@ -29,6 +31,12 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.abspath(os.environ.get("RINASCITA_DATA") or APP_DIR)
 DATI = os.path.join(DATA_DIR, "dati.json")
 BACKUP_DIR = os.path.join(DATA_DIR, "backup")
+FOTO_DIR = os.path.join(DATA_DIR, "foto")
+
+# foto: nome generato dal server, mai scelto dal client (niente path traversal)
+POSE = ("frontale", "laterale", "retro")
+NOME_FOTO = re.compile(r"^\d{4}-\d{2}-\d{2}_(frontale|laterale|retro)_[0-9a-f]{12}\.jpg$")
+FOTO_MAX = 15_000_000
 
 HOST = os.environ.get("RINASCITA_HOST", "127.0.0.1")
 PORT = int(os.environ.get("RINASCITA_PORT", "8765"))
@@ -95,11 +103,69 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    # ---------- foto ----------
+
+    def _nome_foto(self):
+        """Nome del file da /api/foto/<nome>, solo se ha la forma attesa."""
+        nome = self.path.split("?")[0][len("/api/foto/"):]
+        return nome if NOME_FOTO.match(nome) else None
+
+    def _foto_get(self):
+        nome = self._nome_foto()
+        p = os.path.join(FOTO_DIR, nome) if nome else None
+        if not p or not os.path.isfile(p):
+            return self.send_error(404, "Not found")
+        with open(p, "rb") as f:
+            body = f.read()
+        self.send_response(200)
+        self.send_header("Content-Type", "image/jpeg")
+        self.send_header("Content-Length", str(len(body)))
+        # il nome e' univoco: una foto sostituita ha un nome nuovo
+        self.send_header("Cache-Control", "private, max-age=31536000, immutable")
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _foto_post(self):
+        q = dict(kv.split("=", 1) for kv in self.path.partition("?")[2].split("&") if "=" in kv)
+        data, posa = q.get("data", ""), q.get("posa", "")
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$", data) or posa not in POSE:
+            raise ValueError("data o posa non valida")
+        lung = int(self.headers.get("Content-Length", 0))
+        if lung <= 0 or lung > FOTO_MAX:
+            raise ValueError("dimensione non valida")
+        body = self.rfile.read(lung)
+        if body[:3] != b"\xff\xd8\xff":
+            raise ValueError("non e' un'immagine JPEG")
+        os.makedirs(FOTO_DIR, exist_ok=True)
+        nome = "%s_%s_%s.jpg" % (data, posa, secrets.token_hex(6))
+        tmp = os.path.join(FOTO_DIR, nome + ".tmp")
+        with open(tmp, "wb") as f:
+            f.write(body)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, os.path.join(FOTO_DIR, nome))
+        log("foto salvata: %s (%d KB)" % (nome, lung // 1024))
+        return self._json({"ok": True, "file": nome})
+
+    def do_DELETE(self):
+        if not self.path.startswith("/api/foto/"):
+            return self._json({"ok": False, "errore": "endpoint sconosciuto"}, 404)
+        nome = self._nome_foto()
+        if not nome:
+            return self._json({"ok": False, "errore": "nome non valido"}, 400)
+        p = os.path.join(FOTO_DIR, nome)
+        if os.path.isfile(p):
+            os.remove(p)
+            log("foto eliminata: %s" % nome)
+        return self._json({"ok": True})
+
     # ---------- rotte ----------
 
     def do_GET(self):
+        if self.path.startswith("/api/foto/"):
+            return self._foto_get()
         if self.path == "/api/ping":
-            return self._json({"ok": True, "file": DATI})
+            return self._json({"ok": True, "file": DATI, "foto": True})
         if self.path == "/api/salute":
             d = leggi() or {}
             return self._json({"ok": True, "rilevazioni": len(d.get("mis", [])),
@@ -112,6 +178,12 @@ class Handler(SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
+        if self.path.split("?")[0] == "/api/foto":
+            try:
+                return self._foto_post()
+            except Exception as e:
+                log("! errore foto: %s" % e)
+                return self._json({"ok": False, "errore": str(e)}, 400)
         if self.path != "/api/dati":
             return self._json({"ok": False, "errore": "endpoint sconosciuto"}, 404)
         try:
@@ -157,6 +229,7 @@ def main():
     log("App ....... %s" % url)
     log("Dati ...... %s" % DATI)
     log("Backup .... %s (ultimi %d giorni)" % (BACKUP_DIR, DA_TENERE) if DA_TENERE else "Backup .... disattivati")
+    log("Foto ...... %s" % FOTO_DIR)
     print()
 
     apri = os.environ.get("RINASCITA_BROWSER")

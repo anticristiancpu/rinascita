@@ -27,6 +27,16 @@ una complessiva. Uno sgarro isolato non spezza la streak della dieta, due di
 fila sì; stessa regola per il riposo sull'allenamento. La complessiva conta
 i giorni con almeno 2 tra dieta, allenamento e passi.
 
+**Foto** — per ogni sessione tre pose: frontale, laterale e retro. Confronto
+tra due sessioni a scelta, affiancate o con un cursore che scorre dal prima al
+dopo, su una posa o su tutte e tre insieme, con la variazione di peso, grasso e
+muscoli tra le due date (presa dalla pesata più vicina, entro 3 giorni).
+La sequenza di una singola posa mostra tutta la trasformazione in ordine; a
+tutto schermo si sfoglia con le frecce o con lo swipe. Le foto vengono
+ridimensionate (lato lungo 1600 px) e ripulite dai dati EXIF, GPS compreso,
+già nel browser prima dell'invio. Serve il server: aprendo `index.html` a mano
+la sezione resta disattivata.
+
 **Traguardi** — costruiti automaticamente dal peso di partenza: i `-5 kg`,
 `-10 kg`…, le soglie BMI (obesità, sovrappeso, normopeso) calcolate
 sull'altezza, e le soglie tonde (sotto i 100, sotto i 90…).
@@ -122,6 +132,7 @@ Rieseguire l'installer è sicuro: aggiorna i file e riavvia il servizio,
 |---|---|
 | Rilevazioni e parametri | `/var/lib/rinascita/dati.json` |
 | Copie giornaliere | `/var/lib/rinascita/backup/` (ultime 30) |
+| Foto | `/var/lib/rinascita/foto/` (in `dati.json` restano solo i nomi dei file) |
 
 Ogni modifica viene scritta subito, in modo atomico (file temporaneo + rename),
 così un'interruzione non può corrompere lo storico. Prima della prima scrittura
@@ -137,6 +148,13 @@ sul server è la fonte di verità**: all'avvio l'app legge da lì.
 ```bash
 # dal tuo PC
 scp root@192.168.1.42:/var/lib/rinascita/dati.json ~/rinascita-backup.json
+```
+
+Le foto non sono dentro `dati.json` e non finiscono nei backup giornalieri:
+copia anche la cartella `foto/`.
+
+```bash
+scp -r root@192.168.1.42:/var/lib/rinascita/foto ~/rinascita-foto
 ```
 
 Dall'app, in Impostazioni, ci sono anche **Esporta JSON** e **Esporta CSV**.
@@ -190,7 +208,7 @@ destra te lo dice.
 ## Sicurezza
 
 **L'app non ha autenticazione.** Chiunque raggiunga la porta può leggere e
-modificare i dati. Va bene su una LAN domestica; non esporla su Internet così
+modificare i dati, foto comprese. Va bene su una LAN domestica; non esporla su Internet così
 com'è. Se ti serve, mettici davanti un reverse proxy con autenticazione
 (Caddy, nginx, Authelia) o raggiungila via VPN o Tailscale.
 
