@@ -11,8 +11,11 @@ bilance impedenziometriche (testata con INSMART Health).
 
 ## Cosa fa
 
-**Dashboard** — peso attuale, chili persi, BMI, distanza dall'obiettivo,
-grafico del peso con la traiettoria verso l'obiettivo e media mobile, grafico
+**Dashboard** — peso attuale, chili persi, BMI, distanza dall'obiettivo;
+un riepilogo con una riga per ogni sezione (peso, composizione, misure,
+abitudini degli ultimi 7 giorni, traguardi, foto) che apre la sezione al
+tocco; le tre pose dell'ultima sessione di foto, con il confronto rapido con
+la prima; grafico del peso con la traiettoria verso l'obiettivo e media mobile, grafico
 della composizione corporea con 14 metriche selezionabili, statistiche
 (media settimanale, ritmo giornaliero, data stimata di arrivo, anticipo o
 ritardo sulla traiettoria).

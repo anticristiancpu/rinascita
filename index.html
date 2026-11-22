@@ -130,6 +130,23 @@
   .storico .row{justify-content:center}
   .storico h2{text-align:left}
 
+  /* dashboard: riepilogo di tutte le sezioni + ultime foto */
+  .rgrid{grid-template-columns:1fr 1.15fr;align-items:start}
+  @media(max-width:900px){.rgrid{grid-template-columns:1fr}}
+  .rv{display:grid;grid-template-columns:30px 1fr auto;gap:2px 12px;align-items:center;width:100%;
+    padding:10px 4px;border:0;border-bottom:1px solid #1b2432;background:none;color:inherit;font:inherit;
+    text-align:left;cursor:pointer;border-radius:8px}
+  .rv:last-child{border-bottom:0}
+  .rv:hover{background:#111a26}
+  .rv .ic{grid-row:span 2;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:14px;
+    background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}
+  .rv .t{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--dim2);font-weight:700}
+  .rv .v{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.35}
+  .rv .s{grid-column:2/4;font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+  .rv .go{grid-row:1;grid-column:3;color:var(--dim2);font-size:16px}
+  .dfgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  @media(max-width:560px){.dfgrid{gap:5px} .dfgrid .ph .lab{font-size:10px;padding:2px 7px}}
+
   /* misure: parti del corpo in riga, date in colonna (come il foglio di calcolo) */
   .circt td:first-child,.circt th:first-child{position:sticky;left:0;z-index:2;text-align:left;background:#151d29}
   .circt td:first-child{font-weight:600;color:var(--dim);font-size:13.5px;padding-top:13px}
@@ -371,6 +388,17 @@
       <div class="card kpi"><div class="lbl">Persi finora</div><div class="val down" id="kPersi">—</div><div class="note" id="kPersiN"></div></div>
       <div class="card kpi"><div class="lbl">BMI</div><div class="val" id="kBmi">—</div><div class="note" id="kBmiN"></div></div>
       <div class="card kpi"><div class="lbl">All'obiettivo</div><div class="val" id="kMan">—</div><div class="note" id="kManN"></div></div>
+    </div>
+
+    <div class="grid rgrid" style="margin-bottom:12px">
+      <div class="card">
+        <h2>Riepilogo</h2>
+        <div id="riepilogo"></div>
+      </div>
+      <div class="card">
+        <h2>Ultime foto <span class="r" id="dfData"></span></h2>
+        <div id="dashFoto"></div>
+      </div>
     </div>
 
     <div class="card" style="margin-bottom:12px">
@@ -830,7 +858,7 @@ async function boot(){
   if(!S.giorni) S.giorni = {};
   if(!Array.isArray(S.foto)) S.foto = [];
   const seme = fixCirc();
-  initForm(); initSel(); initCal(); initCirc(); initFoto(); render(); stato();
+  initForm(); initSel(); initCal(); initCirc(); initFoto(); initDash(); render(); stato();
   if(seme) save();
 }
 /* Le misure del foglio di calcolo entrano una volta sola: se l'utente le cancella tutte resta []. */
@@ -943,7 +971,7 @@ function render(){
   renderStats(s); renderUltima(tutte);
   chartWeight(); chartComp();
   renderTable(tutte); renderLast(tutte);
-  renderMiles(); renderStreaks(); renderCal(); renderCirc(); renderFoto();
+  renderMiles(); renderStreaks(); renderCal(); renderCirc(); renderFoto(); renderRiepilogo();
 
   const fonte = PIfonte();
   $("#sPiVal").innerHTML = fonte
@@ -1676,6 +1704,108 @@ function initCal(){
   };
 }
 
+/* ================= dashboard: riepilogo generale ================= */
+/* Una riga per sezione; toccandola si apre la sezione. */
+const vai = t => $(`nav button[data-t="${t}"]`).click();
+
+function renderRiepilogo(){
+  const righe = [];
+  const riga = (go, c, ic, t, v, s) => righe.push(`<button class="rv" data-go="${go}" style="--c:${c}">
+    <span class="ic">${ic}</span><div><div class="t">${t}</div><div class="v">${v}</div></div>
+    <span class="go">›</span><div class="s">${s}</div></button>`);
+
+  /* peso */
+  const tutte = sorted(), l = last(), via = avviato();
+  if(l){
+    const pi = PI(), pa = pesoAttuale(), tot = pi-S.pesoObiettivo;
+    const pct = via && tot>0 ? clamp((pi-pa)/tot*100,0,100) : 0;
+    riga("reg", "#3ddc97", "kg", "Peso", `${num(pa)} kg ${via?delta(pa-pi)+'<span style="color:var(--dim2);font-size:12px;font-weight:500"> dalla partenza</span>':""}`,
+      via ? `${num(pct,0)}% del percorso · mancano ${num(Math.max(0,pa-S.pesoObiettivo))} kg · ${tutte.length} pesate`
+          : `${tutte.length} pesate · il percorso parte dal ${fmtL(S.inizio)}`);
+  }else riga("reg", "#3ddc97", "kg", "Peso", "—", "Nessuna pesata: registrala dal Registro");
+
+  /* composizione: ultima con il grasso, contro la prima del programma */
+  const comp = tutte.filter(m=>m.bf!=null), cu = comp[comp.length-1];
+  const c0 = comp.find(m=>m.data>=S.inizio) || comp[0];
+  if(cu){
+    const dd = (k,giu)=> valOf(c0,k)!=null && valOf(cu,k)!=null && c0!==cu ? " "+delta(valOf(cu,k)-valOf(c0,k),giu) : "";
+    riga("reg", "#ef6461", "%", "Composizione",
+      `${num(cu.bf)}% grasso${cu.muscolo!=null?` · ${num(cu.muscolo)} kg muscoli`:""}`,
+      c0!==cu ? `dal ${fmtL(c0.data)}: grasso${dd("bf",0)} %${cu.muscolo!=null?` · muscoli${dd("muscolo",1)} kg`:""}`
+              : `rilevazione del ${fmtL(cu.data)}`);
+  }
+
+  /* misure */
+  const ss = circSort();
+  if(ss.length){
+    const tot = CIRC.reduce((t,c)=>{ const e=estremi(ss,c.k); return e && e.n>1 ? t+(e.b-e.a) : t; }, 0);
+    const vita = estremi(ss,"vita");
+    riga("circ", "#5aa9e6", "cm", "Misure",
+      ss.length>1 ? `${tot>0.05?"+"+cm(tot):cm(-tot)} cm ${tot>0.05?"in più":"in meno"}` : "Prima misurazione",
+      `${vita?`vita ${cm(vita.b)} cm${vita.n>1?" "+dcm(vita.b-vita.a):""} · `:""}${ss.length} misurazion${ss.length===1?"e":"i"} · ultima il ${fmtL(ss[ss.length-1].data)}`);
+  }else riga("circ", "#5aa9e6", "cm", "Misure", "—", "Nessuna misurazione del corpo");
+
+  /* abitudini: streak complessiva + ultimi 7 giorni */
+  const comp7 = STREAK.find(s=>s.k==="tutto"), n = streakAttuale(comp7);
+  const sett = k => { let c=0; for(let i=0;i<7;i++) if(ha(piuGiorni(today(),-i),k)) c++; return c; };
+  riga("cal", "#f5b942", "✓", "Abitudini",
+    `${n} giorn${n===1?"o":"i"} di streak <span style="color:var(--dim2);font-size:12px;font-weight:500">(record ${streakRecord(comp7)})</span>`,
+    `ultimi 7 giorni: dieta ${sett("dieta")} · allenamento ${sett("allen")} · passi ${sett("passi")} · sgarri ${sett("sgarro")}`);
+
+  /* traguardi */
+  const ms = milestones(), fatti = ms.filter(m=>m.hit).length, nx = ms.find(m=>m.next);
+  riga("mile", "#b388f5", "★", "Traguardi",
+    ms.length ? `${fatti} di ${ms.length} raggiunti` : "—",
+    !ms.length ? "Nascono dalla prima pesata"
+      : nx ? `prossimo: ${nx.n} · mancano ${num(pesoAttuale()-nx.w)} kg` : "tutti raggiunti");
+
+  /* foto */
+  const sf = sessioni();
+  riga("foto", "#4dd0e1", "▣", "Foto",
+    !FOTO_OK ? "—" : sf.length ? `${sf.length} session${sf.length===1?"e":"i"}` : "Nessuna sessione",
+    !FOTO_OK ? "Servono il server e Avvia.bat"
+      : sf.length ? `ultima il ${fmtL(sf[sf.length-1].data)}${sf.length>1?` · prima il ${fmtL(sf[0].data)}`:""}` : "Aggiungi le prime foto dalla sezione Foto");
+
+  $("#riepilogo").innerHTML = righe.join("");
+}
+
+/* le tre pose dell'ultima sessione, con il confronto rapido con la prima */
+function renderDashFoto(){
+  const el = $("#dashFoto"), ss = sessioni();
+  if(!FOTO_OK || !ss.length){
+    $("#dfData").textContent = "";
+    el.innerHTML = `<div class="empty">${!FOTO_OK ? "Le foto sono disponibili solo aprendo l'app dal server."
+      : `Nessuna foto ancora.<br><button class="btn sm" data-go="foto" style="margin-top:12px">＋ Aggiungi le prime foto</button>`}</div>`;
+    return;
+  }
+  const u = ss[ss.length-1], p0 = ss[0], m = pesoVicino(u.data), m0 = pesoVicino(p0.data);
+  $("#dfData").textContent = fmtL(u.data) + (m ? ` · ${num(m.peso)} kg` : "");
+  el.innerHTML = `<div class="dfgrid">${POSE.map(p=>ph(u, p, POSA_N[p])).join("")}</div>
+    ${u.note?`<div class="hint">${esc(u.note)}</div>`:""}
+    <div class="row" style="justify-content:space-between;margin-top:12px">
+      <span style="font-size:13px;color:var(--dim)">${ss.length>1
+        ? `${days(p0.data,u.data)} giorni dalla prima foto${m&&m0?` · ${delta(m.peso-m0.peso)} kg`:""}`
+        : "Prima sessione di foto"}</span>
+      <span class="row" style="gap:6px">
+        ${ss.length>1?`<button class="btn sm" data-cmp="1">Confronta con la prima</button>`:""}
+        <button class="btn ghost sm" data-go="foto">Tutte le foto</button>
+      </span>
+    </div>`;
+}
+
+function initDash(){
+  $("#riepilogo").onclick = e=>{ const b=e.target.closest("[data-go]"); if(b) vai(b.dataset.go); };
+  $("#dashFoto").onclick = e=>{
+    const f = e.target.closest("[data-lb]");
+    if(f){ const [d,p] = f.dataset.lb.split("|"); return apriLb(d, p); }
+    if(e.target.closest("[data-cmp]")){
+      const ss = sessioni(); CMP.a = ss[0].data; CMP.b = ss[ss.length-1].data;
+      renderFoto(); vai("foto"); return;
+    }
+    const g = e.target.closest("[data-go]"); if(g) vai(g.dataset.go);
+  };
+}
+
 /* ================= misure del corpo ================= */
 /* S.circ = [{data, note, v:{collo, spalle, …}}] in centimetri. Ogni variazione è sulla
    misurazione precedente che ha quella misura; il totale va dalla prima all'ultima. */
@@ -1996,6 +2126,7 @@ function trasparenza(A, B, p){
 }
 
 function renderFoto(){
+  renderDashFoto();
   $("#fotoNoSrv").style.display = FOTO_OK ? "none" : "block";
   $("#fotoOk").style.display    = FOTO_OK ? "" : "none";
   if(!FOTO_OK) return;
@@ -2483,6 +2614,7 @@ $$("nav button").forEach(b=>b.onclick=()=>{
   $$("nav button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
   $$("section").forEach(x=>x.classList.remove("on")); $("#"+b.dataset.t).classList.add("on");
   if(b.dataset.t==="circ") scorriCirc();
+  if(b.dataset.t==="dash") renderRiepilogo();     // calendario e foto non ridisegnano tutto
   window.scrollTo({top:0,behavior:"smooth"});
 });
 
