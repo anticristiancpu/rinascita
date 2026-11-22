@@ -11,11 +11,20 @@ bilance impedenziometriche (testata con INSMART Health).
 
 ## Cosa fa
 
-**Dashboard** — peso attuale, chili persi, BMI, distanza dall'obiettivo;
-un riepilogo con una riga per ogni sezione (peso, composizione, misure,
-abitudini degli ultimi 7 giorni, traguardi, foto) che apre la sezione al
-tocco; le tre pose dell'ultima sessione di foto, con il confronto rapido con
-la prima; grafico del peso con la traiettoria verso l'obiettivo e media mobile, grafico
+Il menu sta a sinistra; sul telefono diventa una barra in alto.
+
+**Dashboard** — in cima gli avvisi delle rilevazioni da rifare (pesata,
+misure, foto: la cadenza si sceglie nelle Impostazioni). Poi peso attuale,
+chili persi, BMI, distanza dall'obiettivo; un riepilogo con una riga per ogni
+sezione che la apre al tocco; le tre pose dell'ultima sessione di foto, con il
+confronto rapido con la prima. **Qualità del dimagrimento**: quanta parte del
+peso perso è grasso e quanta massa magra. **Corpo**: rapporto vita/altezza con
+le fasce di rischio, vita/fianchi, grasso stimato dalle misure accanto a
+quello della bilancia. **Ritmo**: la variazione della media settimanale delle
+ultime 8 settimane, la settimana migliore e il calo settimanale che serve per
+arrivare all'obiettivo in tempo. **Abitudini**: le ultime 5 settimane giorno
+per giorno, i conteggi degli ultimi 30 giorni e le streak. Poi il
+grafico del peso con la traiettoria verso l'obiettivo e media mobile, grafico
 della composizione corporea con 14 metriche selezionabili, statistiche
 (media settimanale, ritmo giornaliero, data stimata di arrivo, anticipo o
 ritardo sulla traiettoria).
@@ -29,15 +38,24 @@ vita, fianchi, bicipite, coscia e polpaccio. Tabella con una colonna per
 misurazione, come sul foglio di calcolo: sotto ogni valore la variazione
 sulla precedente, in fondo la somma di tutte le misure e, nell'ultima colonna,
 il totale dalla prima. In cima i centimetri persi in totale, la vita e il
-rapporto vita/fianchi; poi il grafico di una misura alla volta e il confronto
-tra due date qualsiasi. Le prime misurazioni arrivano dal file `Misure.xlsx`
+rapporto vita/altezza e vita/fianchi. La percentuale di grasso viene stimata
+anche dalle misure (formula della US Navy, da collo, vita e altezza; per le
+donne anche i fianchi, il sesso si imposta nelle Impostazioni) e messa sullo
+stesso grafico di quella della bilancia. Poi il grafico di una misura alla
+volta e il confronto tra due date qualsiasi. Le prime misurazioni arrivano dal file `Misure.xlsx`
 e vengono caricate da sole la prima volta che apri l'app aggiornata.
 
 **Calendario** — un mese alla volta, segni i giorni con dieta, allenamento,
 10.000 passi, sgarro e riposo. In cima quattro streak: una per abitudine e
 una complessiva. Uno sgarro isolato non spezza la streak della dieta, due di
 fila sì; stessa regola per il riposo sull'allenamento. La complessiva conta
-i giorni con almeno 2 tra dieta, allenamento e passi.
+i giorni con almeno 2 tra dieta, allenamento e passi. In fondo, l'**effetto
+delle abitudini sul peso**: per ogni abitudine il calo medio delle settimane
+in cui l'hai rispettata contro quello delle altre.
+
+**Report mensile** — dal menu o dal riepilogo: una pagina chiara con peso,
+grafico del mese, composizione, misure, abitudini, traguardi raggiunti e foto
+prima/ora, pronta da stampare o salvare in PDF.
 
 **Foto** — per ogni sessione tre pose: frontale, laterale e retro. Confronto
 tra due sessioni a scelta, affiancate, con un cursore che scorre dal prima al
@@ -60,7 +78,9 @@ la sezione resta disattivata.
 
 **Traguardi** — costruiti automaticamente dal peso di partenza: i `-5 kg`,
 `-10 kg`…, le soglie BMI (obesità, sovrappeso, normopeso) calcolate
-sull'altezza, e le soglie tonde (sotto i 100, sotto i 90…).
+sull'altezza, e le soglie tonde (sotto i 100, sotto i 90…). Più i traguardi
+della vita: le soglie del rapporto vita/altezza (0,60, 0,55, 0,50) e le
+decine tonde di centimetri.
 
 **Import dalla bilancia** — carichi l'export `.xls` e scegli quali singole
 pesate importare. Il parser BIFF8 è scritto in JavaScript puro: nessuna
