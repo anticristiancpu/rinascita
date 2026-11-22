@@ -81,8 +81,18 @@
   nav button.on{background:rgba(61,220,151,.1);color:var(--txt);box-shadow:inset 3px 0 0 var(--acc)}
   nav button.on svg{color:var(--acc);opacity:1}
   .sfoot{margin-top:auto}
-  @media(min-width:901px){ .hero .brand .mark,.hero h1{display:none} .hero .sub{font-size:13px;margin:0} }
-  @media(max-width:900px){
+  @media(min-width:641px){ .hero .brand .mark,.hero h1{display:none} .hero .sub{font-size:13px;margin:0} }
+  /* finestre medie: colonna stretta con l'icona sopra il nome */
+  @media(min-width:641px) and (max-width:1100px){
+    .app{grid-template-columns:84px minmax(0,1fr)}
+    .side{padding:14px 6px;gap:16px}
+    .sbrand{justify-content:center;padding:0} .sbrand b{display:none}
+    nav button{flex-direction:column;gap:5px;padding:9px 2px;font-size:11px;text-align:center;justify-content:center}
+    nav button svg{width:20px;height:20px}
+    nav button.on{box-shadow:inset 3px 0 0 var(--acc)}
+    .sfoot .btn{padding:8px 2px;font-size:11px;white-space:normal;line-height:1.25}
+  }
+  @media(max-width:640px){
     .app{display:block}
     .side{height:auto;padding:0;gap:0;flex-direction:row;background:rgba(11,15,20,.9);backdrop-filter:blur(12px);
       border-right:0;border-bottom:1px solid var(--line)}
