@@ -130,6 +130,20 @@
   .storico .row{justify-content:center}
   .storico h2{text-align:left}
 
+  /* misure: parti del corpo in riga, date in colonna (come il foglio di calcolo) */
+  .circt td:first-child,.circt th:first-child{position:sticky;left:0;z-index:2;text-align:left;background:#151d29}
+  .circt td:first-child{font-weight:600;color:var(--dim);font-size:13.5px;padding-top:13px}
+  .circt th .az{display:block;margin-top:4px;white-space:nowrap}
+  .circt th .az button{background:none;border:0;color:var(--dim2);cursor:pointer;font-size:13px;padding:0 4px}
+  .circt th .az button:hover{color:var(--txt)} .circt th .az button.cdel:hover{color:var(--bad)}
+  .circt th .nt{display:block;font-size:10px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--dim2);margin-top:2px}
+  .circt .tot{border-left:1px solid var(--line);background:rgba(61,220,151,.03)}
+  .circt tr.somma td{border-top:1px solid var(--line)}
+  .ccr{display:grid;grid-template-columns:1fr auto auto auto;gap:4px 14px;align-items:center;font-variant-numeric:tabular-nums}
+  .ccr>div{padding:6px 0;border-bottom:1px solid #1b2432;font-size:14px;text-align:right}
+  .ccr>div:nth-child(4n+1){text-align:left;color:var(--dim);font-size:13px}
+  .ccr .h{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim2)!important}
+
   input,select,textarea{background:#0d141d;border:1px solid var(--line);color:var(--txt);border-radius:10px;
       padding:10px 11px;font:inherit;font-size:14px;width:100%}
   input:focus,select:focus,textarea:focus{outline:2px solid var(--acc2);outline-offset:-1px}
@@ -341,6 +355,7 @@
 <nav><div class="wrap">
   <button data-t="dash" class="on">Dashboard</button>
   <button data-t="reg">Registro</button>
+  <button data-t="circ">Misure</button>
   <button data-t="cal">Calendario</button>
   <button data-t="foto">Foto</button>
   <button data-t="mile">Milestone</button>
@@ -425,6 +440,54 @@
     <div class="card" style="margin-top:12px">
       <h2>Riepilogo settimanale <span class="r">media delle pesate di ogni settimana</span></h2>
       <div id="last7"></div>
+    </div>
+  </section>
+
+  <!-- ============ MISURE ============ -->
+  <section id="circ">
+    <div class="grid g4" id="circKpi" style="margin-bottom:12px"></div>
+
+    <div class="card storico" style="margin-bottom:12px">
+      <div class="row" style="justify-content:space-between;margin-bottom:12px">
+        <h2 style="margin:0">Misure del corpo <span class="r" id="nCirc"></span></h2>
+        <button class="btn sm" id="btnCirc">＋ Nuova misurazione</button>
+      </div>
+
+      <div id="circForm" style="display:none">
+        <div class="box" style="margin:0 0 14px">
+          <div class="grid g4">
+            <div class="field"><label>Data</label><input type="date" id="cfData"></div>
+            <div class="field" style="grid-column:span 3"><label>Note</label>
+              <input type="text" id="cfNote" placeholder="opzionale — chi ha misurato, ora, condizioni…"></div>
+          </div>
+          <div class="grid g4" id="cfCampi"></div>
+          <div class="row">
+            <button class="btn" id="cfSalva">Salva misurazione</button>
+            <button class="btn ghost sm" id="cfAnnulla">Annulla</button>
+          </div>
+          <div class="hint" id="cfHint">In centimetri. Le misure lasciate vuote non vengono registrate.
+            Salvando due volte la stessa data, la misurazione viene sovrascritta.</div>
+        </div>
+      </div>
+
+      <div class="tscroll"><table id="circTbl"></table></div>
+      <div class="empty" id="circVuoto">Nessuna misurazione. Usa <b>＋ Nuova misurazione</b> per registrare la prima.</div>
+      <div class="hint" id="circNota"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <h2>Andamento</h2>
+      <div class="sel" id="circSel" style="margin-bottom:12px"></div>
+      <svg class="chart" id="chartCirc"></svg>
+      <div class="legend" id="legCirc"></div>
+    </div>
+    <div class="card">
+      <h2>Confronto tra due date</h2>
+      <div class="grid g4">
+        <div class="field"><label>Da</label><select id="ccA"></select></div>
+        <div class="field"><label>A</label><select id="ccB"></select></div>
+      </div>
+      <div id="ccLista"></div>
     </div>
   </section>
 
@@ -641,6 +704,13 @@ const SEED = {
     {v:35, n:"Obesità 1ª Classe", d:"BMI sotto 35: si esce dall'obesità di 2ª classe."},
     {v:30, n:"Sovrappeso",        d:"BMI sotto 30: fuori dall'obesità, solo sovrappeso."},
     {v:25, n:"Normopeso",         d:"BMI sotto 25: normopeso a tutti gli effetti."}
+  ],
+  /* misure del corpo dal file Misure.xlsx (cm), usate solo se nei dati non ce ne sono ancora */
+  circ: [
+    {data:"2026-08-07", note:"Leon", v:{collo:43, spalle:129, petto:123, vita:116, fianchi:128, bicipite:39, coscia:69, polpaccio:44}},
+    {data:"2026-10-04", note:"",     v:{collo:42, spalle:129, petto:123, vita:115, fianchi:124, bicipite:39, coscia:69, polpaccio:46}},
+    {data:"2026-10-11", note:"",     v:{collo:42, spalle:125, petto:119, vita:112, fianchi:120, bicipite:38, coscia:64, polpaccio:44}},
+    {data:"2026-11-21", note:"",     v:{collo:42, spalle:126, petto:117, vita:113, fianchi:119, bicipite:37, coscia:66, polpaccio:45}}
   ]
 };
 
@@ -759,7 +829,15 @@ async function boot(){
   }catch(e){ MODE="local"; }
   if(!S.giorni) S.giorni = {};
   if(!Array.isArray(S.foto)) S.foto = [];
-  initForm(); initSel(); initCal(); initFoto(); render(); stato();
+  const seme = fixCirc();
+  initForm(); initSel(); initCal(); initCirc(); initFoto(); render(); stato();
+  if(seme) save();
+}
+/* Le misure del foglio di calcolo entrano una volta sola: se l'utente le cancella tutte resta []. */
+function fixCirc(){
+  if(Array.isArray(S.circ)) return false;
+  S.circ = JSON.parse(JSON.stringify(SEED.circ));
+  return true;
 }
 window.addEventListener("beforeunload", e=>{ if(MODE==="file"&&(dirty||saving)){ e.preventDefault(); e.returnValue=""; }});
 
@@ -865,7 +943,7 @@ function render(){
   renderStats(s); renderUltima(tutte);
   chartWeight(); chartComp();
   renderTable(tutte); renderLast(tutte);
-  renderMiles(); renderStreaks(); renderCal(); renderFoto();
+  renderMiles(); renderStreaks(); renderCal(); renderCirc(); renderFoto();
 
   const fonte = PIfonte();
   $("#sPiVal").innerHTML = fonte
@@ -1598,6 +1676,224 @@ function initCal(){
   };
 }
 
+/* ================= misure del corpo ================= */
+/* S.circ = [{data, note, v:{collo, spalle, …}}] in centimetri. Ogni variazione è sulla
+   misurazione precedente che ha quella misura; il totale va dalla prima all'ultima. */
+const CIRC = [
+  {k:"collo",     n:"Collo",     c:"#9aa8bd"},
+  {k:"spalle",    n:"Spalle",    c:"#5aa9e6"},
+  {k:"petto",     n:"Petto",     c:"#7cc3f0"},
+  {k:"vita",      n:"Vita",      c:"#3ddc97"},
+  {k:"fianchi",   n:"Fianchi",   c:"#f5b942"},
+  {k:"bicipite",  n:"Bicipite",  c:"#b388f5"},
+  {k:"coscia",    n:"Coscia",    c:"#ef6461"},
+  {k:"polpaccio", n:"Polpaccio", c:"#4dd0e1"}
+];
+let CSEL = "vita", CC = {a:null, b:null}, CF = null;
+
+const r1 = v => Math.round(v*10)/10;
+const cm = v => v==null ? "—" : (Number.isInteger(r1(v)) ? String(r1(v)) : r1(v).toFixed(1));
+/* variazione in cm: scendere è il risultato cercato, quindi verde */
+function dcm(d){
+  if(d==null || isNaN(d)) return '<span class="d nil">·</span>';
+  const r = r1(d);
+  if(r===0) return '<span class="d nil">0</span>';
+  return `<span class="d ${r<0?"pos":"neg"}">${r>0?"▲":"▼"} ${cm(Math.abs(r))}</span>`;
+}
+const segCm = d => (r1(d)===0 ? "" : d<0 ? "−" : "+") + cm(Math.abs(d));
+function circSort(){ return [...S.circ].sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:0); }
+function cv(s, k){
+  if(!s || !s.v) return null;
+  if(k==="somma") return CIRC.every(c=>s.v[c.k]!=null) ? CIRC.reduce((t,c)=>t+Number(s.v[c.k]),0) : null;
+  const v = s.v[k];
+  return (v==null || v==="" || isNaN(v)) ? null : Number(v);
+}
+/* valore precedente disponibile per la misura k, prima dell'indice i */
+function cvPrima(ss, i, k){ for(let j=i-1;j>=0;j--){ const v=cv(ss[j],k); if(v!=null) return v; } return null; }
+function estremi(ss, k){
+  const vv = ss.map(s=>cv(s,k)).filter(v=>v!=null);
+  return vv.length ? {a:vv[0], b:vv[vv.length-1], n:vv.length} : null;
+}
+
+function renderCirc(){
+  const ss = circSort(), n = ss.length;
+  $("#nCirc").textContent = n ? `${n} misurazion${n===1?"e":"i"}` : "";
+  $("#circVuoto").style.display = n ? "none" : "block";
+  $("#circTbl").style.display = n ? "" : "none";
+  $("#circNota").textContent = n
+    ? "Sotto ogni valore la variazione sulla misurazione precedente; nell'ultima colonna il totale dalla prima. Verde = centimetri in meno."
+    : "";
+  renderCircKpi(ss); renderCircTbl(ss); renderCircSel(); chartCirc(ss); renderCircCmp(ss);
+}
+
+function renderCircKpi(ss){
+  const el = $("#circKpi");
+  if(!ss.length){ el.innerHTML = ""; return; }
+  const u = ss[ss.length-1];
+  const tot = CIRC.reduce((t,c)=>{ const e=estremi(ss,c.k); return e && e.n>1 ? t+(e.b-e.a) : t; }, 0);
+  const vita = estremi(ss,"vita");
+  const whr = s => cv(s,"vita")!=null && cv(s,"fianchi")!=null ? cv(s,"vita")/cv(s,"fianchi") : null;
+  const ww = ss.map(whr).filter(v=>v!=null);
+  const gg = days(u.data, today());
+  const card = (l,v,nt,cls) => `<div class="card kpi"><div class="lbl">${l}</div>
+    <div class="val ${cls||""}">${v}</div><div class="note">${nt}</div></div>`;
+  el.innerHTML =
+    /* numero positivo se sono calati, con il + davanti se sono aumentati */
+    card("Centimetri persi", (tot>0.05 ? "+"+cm(tot) : cm(-tot))+'<small>cm</small>',
+         ss.length>1 ? `somma delle ${CIRC.length} misure dal ${fmtL(ss[0].data)}` : "serve una seconda misurazione",
+         tot<-0.05?"down":tot>0.05?"up":"flat")
+    + card("Vita", vita ? cm(vita.b)+'<small>cm</small>' : "—",
+         vita && vita.n>1 ? `${dcm(vita.b-vita.a)} cm dal ${fmtL(ss[0].data)}` : "")
+    + card("Vita / fianchi", ww.length ? ww[ww.length-1].toFixed(2) : "—",
+         ww.length>1 ? `era ${ww[0].toFixed(2)} alla prima misurazione` : "rapporto tra le due circonferenze")
+    + card("Ultima misurazione", fmt(u.data),
+         gg===0 ? "oggi" : gg===1 ? "ieri" : gg>0 ? `${gg} giorni fa` : "");
+}
+
+function renderCircTbl(ss){
+  const t = $("#circTbl");
+  if(!ss.length){ t.innerHTML = ""; return; }
+  t.className = "circt";
+  const head = `<thead><tr><th>Misura<span class="u">cm</span></th>${ss.map(s=>`<th>${fmtL(s.data)}
+      ${s.note?`<span class="nt">${esc(s.note)}</span>`:""}
+      <span class="az"><button data-ce="${s.data}" title="Modifica">✎</button><button class="cdel" data-cd="${s.data}" title="Elimina">×</button></span></th>`).join("")}
+    ${ss.length>1?`<th class="tot">Totale<span class="u">dal ${fmt(ss[0].data)}</span></th>`:""}</tr></thead>`;
+  const riga = (k, nome, cls) => {
+    const celle = ss.map((s,i)=>{
+      const v = cv(s,k);
+      if(v==null) return `<td><span class="nv">—</span></td>`;
+      const p = cvPrima(ss,i,k);
+      return `<td><span class="nv"${k==="somma"?' style="font-weight:700"':""}>${cm(v)}</span>
+        <span class="dv">${i===0||p==null?'<span class="d nil">·</span>':dcm(v-p)}</span></td>`;
+    }).join("");
+    const e = estremi(ss,k);
+    const tot = ss.length>1 ? `<td class="tot" style="padding-top:14px">${e&&e.n>1?dcm(e.b-e.a):'<span class="d nil">·</span>'}</td>` : "";
+    return `<tr${cls?` class="${cls}"`:""}><td>${nome}</td>${celle}${tot}</tr>`;
+  };
+  t.innerHTML = head + "<tbody>" + CIRC.map(c=>riga(c.k,c.n)).join("") + riga("somma","Somma","somma") + "</tbody>";
+  scorriCirc();
+}
+/* le misurazioni più recenti in vista (a sezione nascosta non c'è larghezza: si ripete all'apertura) */
+function scorriCirc(){ const sc = $("#circTbl").parentElement; sc.scrollLeft = sc.scrollWidth; }
+
+function renderCircSel(){
+  const voci = CIRC.concat([{k:"somma", n:"Somma", c:"#e8eef7"}]);
+  $("#circSel").innerHTML = voci.map(c=>`<button data-k="${c.k}" class="${CSEL===c.k?"on":""}"><i style="background:${c.c}"></i>${c.n}</button>`).join("");
+}
+
+function chartCirc(ss){
+  const el=$("#chartCirc"), W=960, H=280, P={l:40,r:16,t:20,b:24};
+  mk(el,W,H);
+  const meta = CIRC.find(c=>c.k===CSEL) || {k:"somma", n:"Somma delle misure", c:"#e8eef7"};
+  const pp = ss.filter(s=>cv(s,CSEL)!=null);
+  if(pp.length<2){
+    el.innerHTML = `<text x="${W/2}" y="${H/2}" text-anchor="middle" style="font-size:13px">Servono almeno 2 misurazioni con questo dato</text>`;
+    $("#legCirc").innerHTML = ""; return;
+  }
+  const vv = pp.map(s=>cv(s,CSEL)), mn=Math.min(...vv), mx=Math.max(...vv);
+  const pad = (mx-mn)*.15 + 1, ymin=mn-pad, ymax=mx+pad;
+  const d0 = pp[0].data, span = Math.max(1, days(d0, pp[pp.length-1].data));
+  const X = d => P.l+(W-P.l-P.r)*days(d0,d)/span;
+  const Y = v => P.t+(H-P.t-P.b)*(ymax-v)/(ymax-ymin);
+  let g = griglia(W,H,P,ymin,ymax,v=>v.toFixed(0),"cm");
+  const pts = pp.map(s=>[X(s.data),Y(cv(s,CSEL))]);
+  g += `<polyline fill="none" stroke="${meta.c}" stroke-width="2.5" stroke-linejoin="round" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;
+  pts.forEach((p,i)=>{
+    g += `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="#0b0f14" stroke="${meta.c}" stroke-width="2"/>`;
+    g += `<text x="${p[0]}" y="${p[1]-9}" text-anchor="${i===0?"start":i===pts.length-1?"end":"middle"}" style="fill:var(--txt);font-size:11px">${cm(vv[i])}</text>`;
+  });
+  g += `<text x="${P.l}" y="${H-6}">${fmt(d0)}</text><text x="${W-P.r}" y="${H-6}" text-anchor="end">${fmt(pp[pp.length-1].data)}</text>`;
+  el.innerHTML = g;
+  $("#legCirc").innerHTML = `<span><i style="background:${meta.c}"></i>${meta.n} — da ${cm(vv[0])} a ${cm(vv[vv.length-1])} cm (${dcm(vv[vv.length-1]-vv[0])})</span>`;
+}
+
+function renderCircCmp(ss){
+  const el = $("#ccLista");
+  if(ss.length<2){
+    $("#ccA").innerHTML = $("#ccB").innerHTML = "";
+    el.innerHTML = '<div class="empty">Servono almeno due misurazioni.</div>'; return;
+  }
+  const date = ss.map(s=>s.data);
+  if(!date.includes(CC.a)) CC.a = date[0];
+  if(!date.includes(CC.b)) CC.b = date[date.length-1];
+  const opz = sel => ss.map(s=>`<option value="${s.data}"${s.data===sel?" selected":""}>${fmtL(s.data)}${s.note?" · "+esc(s.note):""}</option>`).join("");
+  $("#ccA").innerHTML = opz(CC.a); $("#ccB").innerHTML = opz(CC.b);
+  const A = ss.find(s=>s.data===CC.a), B = ss.find(s=>s.data===CC.b);
+  const gg = days(CC.a, CC.b);
+  const voci = CIRC.concat([{k:"somma", n:"<b style='color:var(--txt)'>Somma</b>"}]);
+  el.innerHTML = `<div class="ccr"><div class="h">Misura</div><div class="h">${fmt(CC.a)}</div><div class="h">${fmt(CC.b)}</div><div class="h">Variazione</div>
+    ${voci.map(c=>{
+      const a=cv(A,c.k), b=cv(B,c.k);
+      return `<div>${c.n}</div><div>${cm(a)}</div><div>${cm(b)}</div><div>${a!=null&&b!=null?dcm(b-a):'<span class="d nil">·</span>'}</div>`;
+    }).join("")}</div>
+    <div class="hint">${gg===0?"Stessa data.":`${Math.abs(gg)} giorni tra le due misurazioni${gg<0?" (la prima è successiva alla seconda)":""}.`}</div>`;
+}
+
+/* ----- modulo ----- */
+function apriCirc(d){
+  const s = d ? S.circ.find(x=>x.data===d) : null, ult = circSort().pop();
+  CF = {orig: s ? s.data : null};
+  $("#cfData").value = s ? s.data : today();
+  $("#cfNote").value = s ? (s.note||"") : "";
+  CIRC.forEach(c=>{
+    const i = $("#cf_"+c.k);
+    i.value = s && s.v[c.k]!=null ? s.v[c.k] : "";
+    i.placeholder = ult && cv(ult,c.k)!=null ? `ultima: ${cm(cv(ult,c.k))}` : "cm";
+  });
+  $("#circForm").style.display = "block";
+  $("#btnCirc").textContent = "Chiudi"; $("#btnCirc").className = "btn sm ghost";
+  $("#cfSalva").textContent = s ? "Salva modifiche" : "Salva misurazione";
+  $("#circForm").scrollIntoView({behavior:"smooth", block:"nearest"});
+  $("#cf_"+CIRC[0].k).focus({preventScroll:true});
+}
+function chiudiCirc(){
+  CF = null; $("#circForm").style.display = "none";
+  $("#btnCirc").textContent = "＋ Nuova misurazione"; $("#btnCirc").className = "btn sm";
+}
+function salvaCirc(){
+  const data = $("#cfData").value;
+  if(!data) return toast("Inserisci la data",1);
+  const v = {};
+  for(const c of CIRC){
+    const t = $("#cf_"+c.k).value.trim().replace(",",".");
+    if(t==="") continue;
+    const x = parseFloat(t);
+    if(isNaN(x) || x<=0 || x>300) return toast(`${c.n}: valore non valido`,1);
+    v[c.k] = x;
+  }
+  if(!Object.keys(v).length) return toast("Inserisci almeno una misura",1);
+  if(data!==CF.orig && S.circ.some(s=>s.data===data)
+     && !confirm(`Esiste già una misurazione del ${fmtL(data)}. Sostituirla?`)) return;
+  S.circ = S.circ.filter(s=> s.data!==data && s.data!==CF.orig);
+  S.circ.push({data, note:$("#cfNote").value.trim(), v});
+  const nuova = !CF.orig;
+  if(nuova && !S.circ.some(s=>s.data>data)) CC.b = data;   // l'ultima entra subito nel confronto
+  chiudiCirc(); save(); render(); toast(nuova ? "Misurazione salvata" : "Misurazione aggiornata");
+}
+function initCirc(){
+  $("#cfCampi").innerHTML = CIRC.map(c=>`<div class="field"><label>${c.n} (cm)</label>
+    <input type="text" inputmode="decimal" id="cf_${c.k}"></div>`).join("");
+  $("#btnCirc").onclick = ()=> CF ? chiudiCirc() : apriCirc();
+  $("#cfAnnulla").onclick = chiudiCirc;
+  $("#cfSalva").onclick = salvaCirc;
+  $("#cfCampi").onkeydown = e=>{ if(e.key==="Enter") salvaCirc(); };
+  $("#circTbl").onclick = e=>{
+    const ed = e.target.closest("[data-ce]"), dl = e.target.closest("[data-cd]");
+    if(ed) apriCirc(ed.dataset.ce);
+    if(dl && confirm("Eliminare la misurazione del "+fmtL(dl.dataset.cd)+"?")){
+      S.circ = S.circ.filter(s=>s.data!==dl.dataset.cd);
+      if(CF && CF.orig===dl.dataset.cd) chiudiCirc();
+      save(); render(); toast("Misurazione eliminata");
+    }
+  };
+  $("#circSel").onclick = e=>{
+    const b = e.target.closest("button"); if(!b) return;
+    CSEL = b.dataset.k; renderCircSel(); chartCirc(circSort());
+  };
+  $("#ccA").onchange = e=>{ CC.a = e.target.value; renderCircCmp(circSort()); };
+  $("#ccB").onchange = e=>{ CC.b = e.target.value; renderCircCmp(circSort()); };
+}
+
 /* ================= foto ================= */
 /* Una sessione = una data con fino a tre pose. In dati.json resta solo il nome
    dei file; le immagini stanno in foto/ accanto ai dati, servite da /api/foto/. */
@@ -2186,6 +2482,7 @@ function initFoto(){
 $$("nav button").forEach(b=>b.onclick=()=>{
   $$("nav button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
   $$("section").forEach(x=>x.classList.remove("on")); $("#"+b.dataset.t).classList.add("on");
+  if(b.dataset.t==="circ") scorriCirc();
   window.scrollTo({top:0,behavior:"smooth"});
 });
 
@@ -2237,7 +2534,7 @@ $("#fileImp").onchange = e=>{
   r.onload = ()=>{ try{
       const o=JSON.parse(r.result);
       if(!Array.isArray(o.mis)) throw 0;
-      S=Object.assign(base(),o); if(!Array.isArray(S.foto)) S.foto=[];
+      S=Object.assign(base(),o); if(!Array.isArray(S.foto)) S.foto=[]; fixCirc();
       save(); render(); toast("Dati importati");
     }catch(_){ toast("File non valido",1); } };
   r.readAsText(f);
@@ -2245,7 +2542,7 @@ $("#fileImp").onchange = e=>{
 $("#btnReset").onclick = ()=>{
   if(confirm("Cancellare tutte le rilevazioni, i parametri e le foto? L'operazione non è reversibile.")){
     if(FOTO_OK) S.foto.forEach(s=>POSE.forEach(p=>s[p]&&eliminaFile(s[p])));
-    localStorage.removeItem(KEY); S=base(); save(); render(); toast("Dati cancellati");
+    localStorage.removeItem(KEY); S=base(); S.circ=[]; save(); render(); toast("Dati cancellati");
   }
 };
 

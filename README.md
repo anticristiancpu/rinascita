@@ -21,6 +21,15 @@ ritardo sulla traiettoria).
 alla rilevazione precedente, dettaglio giorno per giorno, inserimento manuale
 e riepilogo settimanale.
 
+**Misure** — circonferenze del corpo in centimetri: collo, spalle, petto,
+vita, fianchi, bicipite, coscia e polpaccio. Tabella con una colonna per
+misurazione, come sul foglio di calcolo: sotto ogni valore la variazione
+sulla precedente, in fondo la somma di tutte le misure e, nell'ultima colonna,
+il totale dalla prima. In cima i centimetri persi in totale, la vita e il
+rapporto vita/fianchi; poi il grafico di una misura alla volta e il confronto
+tra due date qualsiasi. Le prime misurazioni arrivano dal file `Misure.xlsx`
+e vengono caricate da sole la prima volta che apri l'app aggiornata.
+
 **Calendario** — un mese alla volta, segni i giorni con dieta, allenamento,
 10.000 passi, sgarro e riposo. In cima quattro streak: una per abitudine e
 una complessiva. Uno sgarro isolato non spezza la streak della dieta, due di
