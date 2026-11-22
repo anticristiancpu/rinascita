@@ -231,7 +231,26 @@
   /* ---------- foto ---------- */
   .ph{position:relative;aspect-ratio:3/4;background:#070a0e;border:1px solid var(--line);border-radius:12px;
     overflow:hidden;display:block;width:100%}
-  .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+  .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;transform-origin:50% 50%}
+  .alb{position:absolute;right:8px;bottom:8px;z-index:3;font:inherit;font-size:11px;font-weight:700;padding:4px 9px;
+    border-radius:99px;background:rgba(11,15,20,.8);border:1px solid var(--line);color:var(--dim);cursor:pointer;white-space:nowrap}
+  .alb:hover{color:var(--acc);border-color:var(--acc2)}
+  .al{position:fixed;inset:0;z-index:95;background:rgba(5,8,12,.97);display:none;overflow:auto;padding:16px}
+  .al.on{display:block}
+  .al-in{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px;align-items:start}
+  @media(max-width:760px){.al-in{grid-template-columns:1fr;gap:12px} .al{padding:10px}
+    .al .al-frame{max-width:calc(48vh*.75)} .al-side .hint{display:none} .al-side .field{margin-bottom:10px}}
+  .al-frame{--o:.4;max-width:calc((100vh - 40px)*.75);margin:0 auto;cursor:grab;touch-action:none;user-select:none}
+  .al-frame:active{cursor:grabbing}
+  .al-frame img{pointer-events:none}
+  .al-frame .rif{z-index:1;opacity:var(--o)}
+  .al-frame .guida{position:absolute;inset:0;z-index:2;pointer-events:none;
+    background-image:
+      linear-gradient(90deg,transparent calc(50% - .5px),rgba(61,220,151,.6) calc(50% - .5px),rgba(61,220,151,.6) calc(50% + .5px),transparent calc(50% + .5px)),
+      repeating-linear-gradient(180deg,transparent 0,transparent calc(10% - 1px),rgba(255,255,255,.2) calc(10% - 1px),rgba(255,255,255,.2) 10%)}
+  .al-side .field{margin-bottom:14px}
+  .al-side input[type=range]{padding:0;accent-color:var(--acc)}
+  .lbph{height:min(calc(100vh - 170px),calc((100vw - 32px)*4/3));width:auto;max-width:100%}
   .ph.vuota{display:grid;place-items:center;color:var(--dim2);font-size:13px;text-align:center;padding:10px}
   .ph .lab{position:absolute;left:8px;top:8px;z-index:3;font-size:11px;font-weight:700;padding:3px 9px;
     border-radius:99px;background:rgba(11,15,20,.78);border:1px solid var(--line);color:var(--txt);
@@ -249,7 +268,7 @@
   .cmprow{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--dim2);font-weight:700;
     grid-column:1/-1;margin-top:4px}
   .cur{--p:50%;user-select:none;touch-action:pan-y}
-  .cur img.sopra{clip-path:inset(0 calc(100% - var(--p)) 0 0)}
+  .cur .sopra{position:absolute;inset:0;z-index:1;clip-path:inset(0 calc(100% - var(--p)) 0 0)}
   .cur .linea{position:absolute;top:0;bottom:0;left:var(--p);width:2px;margin-left:-1px;background:var(--acc);
     z-index:2;pointer-events:none;box-shadow:0 0 10px rgba(61,220,151,.6)}
   .cur .linea::after{content:"⟷";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
@@ -271,7 +290,6 @@
   .lb{position:fixed;inset:0;z-index:90;background:rgba(5,8,12,.94);display:none;flex-direction:column;
     align-items:center;justify-content:center;padding:16px;gap:12px}
   .lb.on{display:flex}
-  .lb img{max-width:100%;max-height:calc(100vh - 150px);object-fit:contain;border-radius:10px}
   .lb .bar2{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
   .lb .nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:99px;
     border:1px solid var(--line);background:rgba(20,28,40,.9);color:var(--txt);font-size:22px;cursor:pointer}
@@ -280,7 +298,8 @@
   .lb .x{position:absolute;top:12px;right:14px}
   .fdel{color:var(--dim2);cursor:pointer;background:none;border:0;font-size:20px;padding:0 6px;line-height:1}
   .fdel:hover{color:var(--bad)}
-  @media(max-width:560px){ .lb .nav{top:auto;bottom:16px;transform:none} .lb img{max-height:calc(100vh - 210px)}
+  @media(max-width:560px){ .lb .nav{top:auto;bottom:16px;transform:none}
+    .lbph{height:min(calc(100vh - 230px),calc((100vw - 32px)*4/3))}
     .cmpgrid.uno .ph:not(.cur) .lab.r{top:auto;bottom:8px;right:auto;left:8px}
     .cmpgrid{gap:6px} }
 </style>
@@ -562,11 +581,41 @@
   <button class="btn ghost sm x" id="lbX">✕ Chiudi</button>
   <button class="nav p" id="lbP" title="Precedente (←)">‹</button>
   <button class="nav n" id="lbN" title="Successiva (→)">›</button>
-  <img id="lbImg" alt="">
+  <div class="ph lbph" id="lbPh"><img id="lbImg" alt=""></div>
   <div class="bar2" id="lbInfo"></div>
   <div class="bar2">
+    <button class="btn ghost sm" id="lbAl">⤢ Allinea</button>
     <button class="btn ghost sm" id="lbA">Usa come «Prima»</button>
     <button class="btn ghost sm" id="lbB">Usa come «Dopo»</button>
+  </div>
+</div>
+
+<div class="al" id="al">
+  <div class="al-in">
+    <div class="ph al-frame" id="alFrame">
+      <img id="alImg" alt="">
+      <img id="alRif" class="rif" alt="">
+      <div class="guida" id="alGuida"></div>
+    </div>
+    <div class="card al-side">
+      <h2>Allinea <span class="r" id="alTit"></span></h2>
+      <div class="field"><label>Zoom <span id="alZv" style="float:right;color:var(--txt)"></span></label>
+        <input type="range" id="alZoom" min="0.5" max="4" step="0.01"></div>
+      <div class="field"><label>Foto di riferimento</label>
+        <select id="alRifSel"></select></div>
+      <div class="field" id="alOpWrap"><label>Trasparenza del riferimento <span id="alOv" style="float:right;color:var(--txt)"></span></label>
+        <input type="range" id="alOp" min="0" max="100" step="1" value="40"></div>
+      <label class="lrow" style="border:1px solid var(--line);border-radius:10px;margin-bottom:14px;text-transform:none;letter-spacing:0;font-size:13px;color:var(--dim)">
+        <input type="checkbox" id="alGr" checked> Mostra la griglia</label>
+      <div class="hint" style="margin:0 0 14px">Trascina la foto per spostarla; rotella del mouse, pizzico o
+        cursore per lo zoom. Fai combaciare testa, spalle e piedi con il riferimento in trasparenza:
+        da lì in poi la foto verrà mostrata con questa inquadratura ovunque. L'originale non viene toccato.</div>
+      <div class="row">
+        <button class="btn" id="alOk">Salva inquadratura</button>
+        <button class="btn ghost sm" id="alNo">Annulla</button>
+        <button class="btn ghost sm" id="alReset">Ripristina</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1598,25 +1647,37 @@ async function caricaFile(blob, data, posa){
 }
 function eliminaFile(f){ return fetch(urlFoto(f), {method:"DELETE"}).catch(()=>{}); }
 
-/* --- riquadro foto: usato da confronto, sessioni e sequenza --- */
-function ph(s, p, lab, info){
+/* --- inquadratura: zoom e spostamento salvati per foto, l'originale resta intatto.
+   x e y sono frazioni del riquadro 3:4, z il fattore di zoom. --- */
+const alDi  = (s,p) => (s && s.allinea && s.allinea[p]) || null;
+const tfStr = a => a ? `transform:translate(${a.x*100}%,${a.y*100}%) scale(${a.z})` : "";
+const imgF  = (s,p,alt) => `<img src="${urlFoto(s[p])}" alt="${alt||""}" loading="lazy" style="${tfStr(alDi(s,p))}">`;
+
+/* --- riquadro foto: usato da confronto, sessioni e sequenza.
+   rif = data della foto con cui allinearla (mostra il pulsante Allinea) --- */
+function ph(s, p, lab, info, rif){
   const f = s && s[p];
   if(!f) return `<div class="ph vuota"><span class="lab">${lab}</span>Nessuna foto ${POSA_N[p].toLowerCase()}</div>`;
   const m = info && pesoVicino(s.data);
   return `<div class="ph click" data-lb="${s.data}|${p}"><span class="lab">${lab}</span>${
     info ? `<span class="lab r">${fmt(s.data)}${m?` · ${num(m.peso)} kg`:""}</span>` : ""}
-    <img src="${urlFoto(f)}" alt="${POSA_N[p]} del ${fmtL(s.data)}" loading="lazy"></div>`;
+    ${imgF(s, p, `${POSA_N[p]} del ${fmtL(s.data)}`)}${
+    rif!=null ? `<button class="alb" data-al="${s.data}|${p}|${rif}" title="Zoom e posizione">⤢ Allinea</button>` : ""}</div>`;
 }
 function cursore(A, B, p){
   if(!A[p] || !B[p]) return `<div class="ph vuota"><span class="lab">${POSA_N[p]}</span>
     Manca la foto ${POSA_N[p].toLowerCase()} in una delle due sessioni</div>`;
-  return `<div class="ph cur">
-    <img src="${urlFoto(B[p])}" alt="Dopo"><img class="sopra" src="${urlFoto(A[p])}" alt="Prima">
+  return `<div><div class="ph cur">
+    ${imgF(B, p, "Dopo")}<div class="sopra">${imgF(A, p, "Prima")}</div>
     <div class="linea"></div>
     <span class="lab">Prima · ${fmt(A.data)}</span><span class="lab r">Dopo · ${fmt(B.data)}</span>
     <span class="lab" style="top:auto;bottom:8px">${POSA_N[p]}</span>
     <input type="range" min="0" max="100" value="50" step="0.5" aria-label="Cursore prima e dopo, ${POSA_N[p]}">
-  </div>`;
+  </div>
+  <div class="row" style="justify-content:center;gap:6px;margin-top:6px">
+    <button class="btn ghost sm" data-al="${A.data}|${p}|${B.data}">⤢ Prima</button>
+    <button class="btn ghost sm" data-al="${B.data}|${p}|${A.data}">⤢ Dopo</button>
+  </div></div>`;
 }
 
 function renderFoto(){
@@ -1663,15 +1724,15 @@ function renderCmp(ss){
   if(CMP.modo === "aff"){
     h = tutte
       ? `<div class="cmpgrid tre">
-           <div class="cmprow">Prima · ${fmtL(A.data)}</div>${POSE.map(p=>ph(A,p,POSA_N[p])).join("")}
-           <div class="cmprow">Dopo · ${fmtL(B.data)}</div>${POSE.map(p=>ph(B,p,POSA_N[p])).join("")}
+           <div class="cmprow">Prima · ${fmtL(A.data)}</div>${POSE.map(p=>ph(A,p,POSA_N[p],0,B.data)).join("")}
+           <div class="cmprow">Dopo · ${fmtL(B.data)}</div>${POSE.map(p=>ph(B,p,POSA_N[p],0,A.data)).join("")}
          </div>`
-      : `<div class="cmpgrid uno">${ph(A,pose[0],"Prima",1)}${ph(B,pose[0],"Dopo",1)}</div>`;
-    $("#cmpHint").textContent = "Tocca una foto per ingrandirla e scorrere tutte le sessioni di quella posa.";
+      : `<div class="cmpgrid uno">${ph(A,pose[0],"Prima",1,B.data)}${ph(B,pose[0],"Dopo",1,A.data)}</div>`;
+    $("#cmpHint").textContent = "Tocca una foto per ingrandirla. Con «⤢ Allinea» la zoomi e la sposti per farla combaciare con l'altra.";
   } else {
     h = `<div class="cmpgrid ${tutte?"tre":"uno"}"${tutte?"":' style="grid-template-columns:1fr;max-width:520px"'}>${
       pose.map(p=>cursore(A,B,p)).join("")}</div>`;
-    $("#cmpHint").textContent = "Trascina il cursore: a sinistra la foto «Prima», a destra la «Dopo».";
+    $("#cmpHint").textContent = "Trascina il cursore: a sinistra la foto «Prima», a destra la «Dopo». Con «⤢» allinei le due inquadrature.";
   }
   $("#cmpView").innerHTML = h;
 }
@@ -1739,9 +1800,10 @@ function chiudiFotoForm(){
 function renderSlots(){
   $("#ffSlots").innerHTML = POSE.map(p=>{
     const x = FF.slot[p], src = x.url || (x.file ? urlFoto(x.file) : "");
+    const tf = x.file ? tfStr(alDi(sessDi(FF.orig), p)) : "";
     return `<div class="slot"><div class="ph${src?" ha":" vuota"}" data-p="${p}" title="Scegli la foto ${POSA_N[p].toLowerCase()}">
       <span class="lab">${POSA_N[p]}</span>${src
-        ? `<img src="${src}" alt="">${x.blob?'<span class="lab" style="top:auto;bottom:8px;color:var(--acc)">nuova</span>':""}
+        ? `<img src="${src}" alt="" style="${tf}">${x.blob?'<span class="lab" style="top:auto;bottom:8px;color:var(--acc)">nuova</span>':""}
            <button class="azz" data-z="${p}" title="Togli questa foto">×</button>`
         : `<span>＋<br>Scegli foto</span>`}
     </div></div>`;
@@ -1782,6 +1844,14 @@ async function salvaFotoForm(){
     });
     if(unisci && !rec.note) rec.note = unisci.note || "";
     POSE.forEach(p=> rec[p] && del.delete(rec[p]));
+    /* l'inquadratura segue il file: resta se la foto è la stessa, si azzera se è nuova */
+    const prec = FF.orig ? sessDi(FF.orig) : null, al = {};
+    POSE.forEach(p=>{
+      const da = [prec, unisci].find(x=> x && rec[p] && x[p]===rec[p]);
+      const a = da && alDi(da, p);
+      if(a) al[p] = a;
+    });
+    if(Object.keys(al).length) rec.allinea = al;
     const nuova = !FF.orig && !unisci;
     S.foto = S.foto.filter(s=> s.data!==data && s.data!==FF.orig);
     S.foto.push(rec);
@@ -1816,6 +1886,7 @@ function disegnaLb(){
   const m0 = pesoVicino(p0.data);
   $("#lbImg").src = urlFoto(s[LB.p]);
   $("#lbImg").alt = `${POSA_N[LB.p]} del ${fmtL(s.data)}`;
+  $("#lbImg").style.cssText = tfStr(alDi(s, LB.p));
   $("#lbInfo").innerHTML = `<span class="tag now">${POSA_N[LB.p]}</span>
     <span class="tag">${fmtL(s.data)}</span>
     ${m?`<span class="tag">${num(m.peso)} kg</span>`:""}
@@ -1828,6 +1899,97 @@ function disegnaLb(){
 }
 function chiudiLb(){ LB = null; $("#lb").classList.remove("on"); document.body.style.overflow = ""; $("#lbImg").removeAttribute("src"); }
 function muoviLb(n){ if(!LB) return; const j = LB.i+n; if(j<0 || j>=LB.lista.length) return; LB.i = j; disegnaLb(); }
+
+/* --- editor dell'inquadratura --- */
+let AL = null;      // {d, p, z, x, y, rif, ptr:Map}
+function apriAllinea(d, p, rifD){
+  const s = sessDi(d); if(!s || !s[p]) return;
+  const a = alDi(s, p) || {z:1, x:0, y:0};
+  const cand = sessioni().filter(x=> x[p] && x.data!==d);
+  if(!cand.some(x=>x.data===rifD)) rifD = cand.length ? cand[0].data : "";
+  AL = {d, p, z:a.z, x:a.x, y:a.y, rif:rifD, ptr:new Map()};
+  $("#alTit").textContent = `${POSA_N[p]} · ${fmtL(d)}`;
+  $("#alImg").src = urlFoto(s[p]);
+  $("#alRifSel").innerHTML = `<option value="">Nessuno</option>` + cand.map(x=>
+    `<option value="${x.data}"${x.data===rifD?" selected":""}>${POSA_N[p]} del ${fmtL(x.data)}</option>`).join("");
+  disegnaRif(); disegnaAl();
+  $("#al").classList.add("on"); document.body.style.overflow = "hidden";
+}
+function disegnaRif(){
+  const r = sessDi(AL.rif), el = $("#alRif"), c = !!(r && r[AL.p]);
+  if(c){ el.src = urlFoto(r[AL.p]); el.style.cssText = tfStr(alDi(r, AL.p)); }
+  else { el.removeAttribute("src"); el.style.cssText = "display:none"; }
+  $("#alOpWrap").style.display = c ? "" : "none";
+  const o = $("#alOp").value;
+  $("#alFrame").style.setProperty("--o", o/100);
+  $("#alOv").textContent = o+"%";
+}
+function disegnaAl(){
+  $("#alImg").style.transform = `translate(${AL.x*100}%,${AL.y*100}%) scale(${AL.z})`;
+  $("#alZoom").value = AL.z;
+  $("#alZv").textContent = Math.round(AL.z*100)+"%";
+}
+/* zoom tenendo fermo il punto (px,py), misurato dal centro del riquadro */
+function zoomAl(z2, px, py){
+  const r = $("#alFrame").getBoundingClientRect();
+  z2 = clamp(z2, 0.5, 4);
+  const ux = (px - AL.x*r.width)/AL.z, uy = (py - AL.y*r.height)/AL.z;
+  AL.x = (px - z2*ux)/r.width; AL.y = (py - z2*uy)/r.height; AL.z = z2;
+  disegnaAl();
+}
+function chiudiAl(){
+  AL = null; $("#al").classList.remove("on");
+  if(!LB) document.body.style.overflow = "";
+}
+function salvaAl(){
+  const s = sessDi(AL.d); if(!s) return chiudiAl();
+  const zero = Math.abs(AL.z-1)<0.001 && Math.abs(AL.x)<0.0005 && Math.abs(AL.y)<0.0005;
+  s.allinea = s.allinea || {};
+  if(zero) delete s.allinea[AL.p];
+  else s.allinea[AL.p] = {z:+AL.z.toFixed(4), x:+AL.x.toFixed(4), y:+AL.y.toFixed(4)};
+  if(!Object.keys(s.allinea).length) delete s.allinea;
+  save(); chiudiAl(); renderFoto();
+  if(LB) disegnaLb();
+  toast(zero ? "Inquadratura originale ripristinata" : "Inquadratura salvata");
+}
+function initAllinea(){
+  const fr = $("#alFrame");
+  const centro = (e)=>{ const r=fr.getBoundingClientRect(); return [e.clientX-(r.left+r.width/2), e.clientY-(r.top+r.height/2)]; };
+  fr.addEventListener("wheel", e=>{
+    if(!AL) return; e.preventDefault();
+    zoomAl(AL.z*Math.exp(-e.deltaY*0.0015), ...centro(e));
+  }, {passive:false});
+  fr.onpointerdown = e=>{ if(!AL) return; fr.setPointerCapture(e.pointerId); AL.ptr.set(e.pointerId, {clientX:e.clientX, clientY:e.clientY}); };
+  fr.onpointermove = e=>{
+    if(!AL || !AL.ptr.has(e.pointerId)) return;
+    const r = fr.getBoundingClientRect();
+    const due = () => [...AL.ptr.values()].slice(0,2);
+    if(AL.ptr.size === 1){
+      const o = AL.ptr.get(e.pointerId);
+      AL.x += (e.clientX-o.clientX)/r.width; AL.y += (e.clientY-o.clientY)/r.height;
+      AL.ptr.set(e.pointerId, {clientX:e.clientX, clientY:e.clientY});
+      return disegnaAl();
+    }
+    /* due dita: sposta col punto medio, zooma col rapporto tra le distanze */
+    const [a0,b0] = due();
+    AL.ptr.set(e.pointerId, {clientX:e.clientX, clientY:e.clientY});
+    const [a1,b1] = due();
+    const mid = (a,b)=>({clientX:(a.clientX+b.clientX)/2, clientY:(a.clientY+b.clientY)/2});
+    const dist = (a,b)=> Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY) || 1;
+    const m0 = mid(a0,b0), m1 = mid(a1,b1);
+    AL.x += (m1.clientX-m0.clientX)/r.width; AL.y += (m1.clientY-m0.clientY)/r.height;
+    zoomAl(AL.z*dist(a1,b1)/dist(a0,b0), ...centro(m1));
+  };
+  const via = e=>{ if(AL) AL.ptr.delete(e.pointerId); };
+  fr.onpointerup = via; fr.onpointercancel = via;
+  $("#alZoom").oninput = e=> AL && zoomAl(+e.target.value, 0, 0);
+  $("#alRifSel").onchange = e=>{ AL.rif = e.target.value; disegnaRif(); };
+  $("#alOp").oninput = ()=> AL && disegnaRif();
+  $("#alGr").onchange = e=> $("#alGuida").style.display = e.target.checked ? "" : "none";
+  $("#alReset").onclick = ()=>{ AL.z=1; AL.x=0; AL.y=0; disegnaAl(); };
+  $("#alNo").onclick = chiudiAl;
+  $("#alOk").onclick = salvaAl;
+}
 
 function initFoto(){
   $("#btnNuoveFoto").onclick = ()=> FF ? chiudiFotoForm() : apriFotoForm(null);
@@ -1860,7 +2022,13 @@ function initFoto(){
   $("#cmpPosa").onclick = e=>{ const b=e.target.closest("button"); if(b){ CMP.posa=b.dataset.p; renderFoto(); } };
   $("#cmpModo").onclick = e=>{ const b=e.target.closest("button"); if(b){ CMP.modo=b.dataset.m; renderFoto(); } };
   $("#cmpView").oninput = e=>{ const c=e.target.closest(".cur"); if(c) c.style.setProperty("--p", e.target.value+"%"); };
-  $("#cmpView").onclick = e=>{ const x=e.target.closest("[data-lb]"); if(x) apriLb(...x.dataset.lb.split("|")); };
+  $("#cmpView").onclick = e=>{
+    const a = e.target.closest("[data-al]");
+    if(a) return apriAllinea(...a.dataset.al.split("|"));
+    const x = e.target.closest("[data-lb]");
+    if(x) apriLb(...x.dataset.lb.split("|"));
+  };
+  initAllinea();
 
   $("#galPosa").onclick = e=>{ const b=e.target.closest("button"); if(b){ GAL=b.dataset.g; renderFoto(); } };
   $("#galleria").onclick = e=>{
@@ -1883,7 +2051,12 @@ function initFoto(){
   $("#lb").onclick = e=>{ if(e.target.id==="lb") chiudiLb(); };
   $("#lbA").onclick = ()=>{ CMP.a = LB.lista[LB.i].data; chiudiLb(); renderFoto(); toast("Impostata come «Prima»"); };
   $("#lbB").onclick = ()=>{ CMP.b = LB.lista[LB.i].data; chiudiLb(); renderFoto(); toast("Impostata come «Dopo»"); };
+  $("#lbAl").onclick = ()=>{
+    const r = LB.lista[LB.i-1] || LB.lista[LB.i+1];      // riferimento: la sessione accanto
+    apriAllinea(LB.lista[LB.i].data, LB.p, r ? r.data : "");
+  };
   document.addEventListener("keydown", e=>{
+    if(AL){ if(e.key==="Escape") chiudiAl(); return; }
     if(!LB) return;
     if(e.key==="Escape") chiudiLb();
     else if(e.key==="ArrowLeft")  muoviLb(-1);

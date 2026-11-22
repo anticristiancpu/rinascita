@@ -32,7 +32,11 @@ tra due sessioni a scelta, affiancate o con un cursore che scorre dal prima al
 dopo, su una posa o su tutte e tre insieme, con la variazione di peso, grasso e
 muscoli tra le due date (presa dalla pesata più vicina, entro 3 giorni).
 La sequenza di una singola posa mostra tutta la trasformazione in ordine; a
-tutto schermo si sfoglia con le frecce o con lo swipe. Le foto vengono
+tutto schermo si sfoglia con le frecce o con lo swipe. Con **Allinea** ogni
+foto si zooma e si sposta (trascinando, con la rotella o con il pizzico)
+tenendo in trasparenza un'altra foto della stessa posa come riferimento, così
+le proporzioni combaciano; l'inquadratura vale in tutte le viste e
+l'originale resta intatto. Le foto vengono
 ridimensionate (lato lungo 1600 px) e ripulite dai dati EXIF, GPS compreso,
 già nel browser prima dell'invio. Serve il server: aprendo `index.html` a mano
 la sezione resta disattivata.
