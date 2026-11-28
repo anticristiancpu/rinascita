@@ -2096,7 +2096,11 @@ function valuta(f, o){
 }
 
 function renderFasi(){
-  const ff = fasiOrd().reverse(), el = $("#fasiLista");
+  /* prima quella in corso, poi le future dalla più vicina, in fondo le concluse dalla più recente */
+  const tutte = fasiOrd(), el = $("#fasiLista");
+  const ff = tutte.filter(f=>statoFase(f)==="corso")
+    .concat(tutte.filter(f=>statoFase(f)==="futura"))
+    .concat(tutte.filter(f=>statoFase(f)==="conclusa").reverse());
   $("#nFasi").textContent = ff.length ? `${ff.length} fas${ff.length===1?"e":"i"}` : "";
   if(!ff.length){
     el.innerHTML = `<div class="empty">Dividi il percorso in fasi, ognuna con le sue date e i suoi obiettivi:
