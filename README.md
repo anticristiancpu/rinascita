@@ -49,7 +49,17 @@ e vengono caricate da sole la prima volta che apri l'app aggiornata.
 10.000 passi, sgarro e riposo. In cima quattro streak: una per abitudine e
 una complessiva. Uno sgarro isolato non spezza la streak della dieta, due di
 fila sì; stessa regola per il riposo sull'allenamento. La complessiva conta
-i giorni con almeno 2 tra dieta, allenamento e passi. In fondo, l'**effetto
+i giorni con almeno 2 tra dieta, allenamento e passi.
+
+Le **fasi** dividono il percorso in periodi (definizione, mantenimento…),
+ognuno con date, colore, note e i suoi obiettivi: peso o grasso a fine fase,
+chili da perdere, una misura del corpo entro tot centimetri, un'abitudine per
+almeno N giorni a settimana, un massimo di sgarri, oppure un obiettivo libero
+da spuntare a mano. Gli obiettivi si verificano da soli con le pesate, le
+misure e il calendario che cadono dentro la fase (in corso, in linea,
+raggiunto, mancato); i giorni della fase hanno una striscia del suo colore nel
+calendario, e la fase in corso compare nel riepilogo della dashboard e nel
+report mensile. In fondo, l'**effetto
 delle abitudini sul peso**: per ogni abitudine il calo medio delle settimane
 in cui l'hai rispettata contro quello delle altre.
 
